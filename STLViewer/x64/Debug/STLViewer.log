@@ -1,0 +1,9 @@
+﻿  Reading Qt configuration (C:/Qt/5.15.2/msvc2019_64/bin/qmake)
+  CustomInteractorStyle.cpp
+  CustomVTKWidget.cpp
+  observer.cpp
+  STLViewer.cpp
+  main.cpp
+  qrc_STLViewer.cpp
+  moc_STLViewer.cpp
+  STLViewer.vcxproj -> C:\STLViewer\x64\Debug\STLViewer.exe
