@@ -73,7 +73,7 @@ void CustomInteractorStyle::OnLeftButtonDown()
 
 		mObserver->func(mActor);
 
-		vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput();
+		vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput(); // ?
 		TriMesh triMesh = convertToMesh(polyData);
 		cout << "triMesh " << triMesh.n_vertices(); // 전체 점을 구한다.
 
@@ -237,7 +237,7 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		eActor->GetProperty()->SetColor(colors->GetColor3d("blue").GetData());
 		// mActor->GetProperty()->SetLineWidth(4);
 		mObserver->func(eActor);
-		vtkSmartPointer<vtkPolyData> polyData1 = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput();
+		vtkSmartPointer<vtkPolyData> polyData1 = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput(); // ??
 		TriMesh triMesh1 = convertToMesh(polyData1);
 
 		vtkNew<vtkSphereSource> dsphereSource;

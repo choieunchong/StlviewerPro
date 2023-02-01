@@ -7,6 +7,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include "observer.h"
+#include <vtkOrientationMarkerWidget.h>
+#include <vtkAxesActor.h>
 
 class CustomVTKWidget : public QVTKOpenGLNativeWidget , public Observer
 {
@@ -30,7 +32,7 @@ protected:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow; 
     vtkSmartPointer<QVTKInteractor> mInteractor;
     QVTKInteractorAdapter* mvtkInteractorAdapter; 
-
+    
     virtual void func(vtkSmartPointer<vtkActor>);
 
 private: 
