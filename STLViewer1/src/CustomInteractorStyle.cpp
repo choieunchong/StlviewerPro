@@ -9,7 +9,6 @@ using namespace std;
 
 CustomInteractorStyle::CustomInteractorStyle()
 {
-	mCount = 0;
 
 }
 
@@ -42,10 +41,7 @@ void CustomInteractorStyle::OnLeftButtonDown()
 	double* worldPosition = cellPicker->GetPickPosition();
 
 	qDebug() << "Cell id is : " << cellPicker->GetCellId();
-	int hid = 0;
-	Pickhash[hid] = mVertex;
-	mCount++;
-	qDebug() << "count" << mCount;
+
 	if (cellPicker->GetCellId() != -1)
 	{
 		qDebug() << "Pick Position is : (" << worldPosition[0] << ", " << worldPosition[1] << ", " << worldPosition[2] << ")";
@@ -73,7 +69,7 @@ void CustomInteractorStyle::OnLeftButtonDown()
 
 		mObserver->func(mActor);
 
-		vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput(); // ?
+		vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput();  
 		TriMesh triMesh = convertToMesh(polyData);
 		cout << "triMesh " << triMesh.n_vertices(); // 전체 점을 구한다.
 
@@ -108,12 +104,6 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		mVertex = vtkSmartPointer<vtkPoints>::New();
 		mVertex->InsertNextPoint(minpoint[0], minpoint[1], minpoint[2]);
 		qDebug() << "minpoint---------------" << mVertex;
-
-		int minId = 0;
-		int eid = 0;
-		vtkIdType id = minId;
-		vtkIdType veid = eid;
-		int did = 0;
 
 		//for (TriMesh::VertexIter v_it = triMesh.vertices_sbegin(); v_it != triMesh.vertices_end(); ++v_it)
 		//{
@@ -196,12 +186,12 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		//idList->Delete(); 
 
 
-		if (vertexIdxs.size() > 1) {
+		if (vertexIdxs.size() > 1) { //vertexIdxs 사이즈가 2부터 = 두번째 클릭 되었을 때 부터 점과 점사이를 이어주는 시작 부분
 			std::vector<int> dijkstarPath = dijkstra(vertexIdxs[vertexIdxs.size() - 2], vertexIdxs.back(), triMesh); // -2를 해준 이유는 첫번째 점에서 가기 위해서 이다.
 			cout <<  " dijkstarPath.size() : " << dijkstarPath.size();
 			for (int vertexIdx : dijkstarPath)
 			{ 
-				vtkNew<vtkSphereSource> sphereSource2;
+				vtkNew<vtkSphereSource> sphereSource2;  //  노란색 점을 찍기 위한 sphereSource
 				sphereSource2->SetCenter(triMesh.point(OpenMesh::VertexHandle(vertexIdx)).data());
 				sphereSource2->SetRadius(0.2);
 				// Make the surface smooth.
@@ -258,6 +248,7 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		//qDebug() << "delete Cell ID : " << cellPicker->GetCellId(); 
 		//triMesh.garbage_collection();
 
+	
 		vtkSmartPointer<vtkPolyData> meshToPoly = convertToPolyData(triMesh);
 		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->SetInputData(meshToPoly);
 		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->Modified();
@@ -300,19 +291,6 @@ void CustomInteractorStyle::addObserver(Observer* observer)
 {
 	mObserver = observer;
 }
-
-//void CustomInteractorStyle::ShortestDistanceAroundVertex(vtkSmartPointer<vtkPolyData> polydata, vtkIdType vertexId) 
-//{
-//	vtkSmartPointer<vtkDijkstraGraphGeodesicPath> dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
-//	mPolyData = polydata;
-//	mIdType = vertexId;
-//	
-//	dijkstra->SetInputData(polydata);
-//	dijkstra->SetStartVertex(vertexId);
-//	dijkstra->Update();
-//	qDebug() << "dijkstra" << dijkstra;
-//
-//}
 
 
 TriMesh CustomInteractorStyle::convertToMesh(vtkSmartPointer<vtkPolyData> polyData)
@@ -376,7 +354,6 @@ vtkSmartPointer<vtkPolyData> CustomInteractorStyle::convertToPolyData(TriMesh tr
 		triangle->GetPointIds()->SetId(2, v2);
 		mCellArray->InsertNextCell(triangle);
 	}
-	//polyData->SetLines(cellArray);// dijkstra 꼭지점간 연결을 하려면 최소한의 호출을 해야한다
 
 	polyData->SetPolys(mCellArray);
 	polyData->Modified();

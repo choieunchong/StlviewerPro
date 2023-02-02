@@ -13,7 +13,10 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 #include <QSlider>
-
+#include <vtkLight.h>
+#include <QPushButton>
+#include <QWidget>
+#include <QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class STLViewer; }
@@ -31,18 +34,23 @@ private:
     Ui::STLViewer *ui;
     CustomVTKWidget* customVTKWidget;
 
+    //vtkSmartPointer<vtkLight> mLight;
     vtkSmartPointer<vtkActor> mActor;
     QColorDialog* mColorDialog;  
     QSlider* mSlider;
     vtkSmartPointer<vtkPolyData> mPolyData;
+    //QPushButton* mAmbient;
+    //QWidget* mWViewer;
+    //QVBoxLayout* m_layout;
 
-signals:
+protected:
+    virtual void resizeEvent(QResizeEvent* event) override;
 
 private slots:
     void ClickedOpen(bool);                         // Menu -> Open 
     void SetColor(QColor);                          // Actor Color Change
     void SetOpacity(int);                           // Acotr Opacity Change
-    void StlViewe();
+    //void on_AmbientButton_clicked();
 
 };
 #endif // STLVIEWER_H

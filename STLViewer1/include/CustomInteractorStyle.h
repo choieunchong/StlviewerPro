@@ -29,6 +29,8 @@
 #include <queue>
 #include <QHash>
 #include <vtkIdList.h>
+#include <vtkLight.h>
+
 
 using namespace std;
 
@@ -42,7 +44,6 @@ public:
 	void GetSphere(vtkSmartPointer<vtkSphereSource>);
 	void GetActor(vtkSmartPointer<vtkActor>);
 	void addObserver(Observer*);
-//	void ShortestDistanceAroundVertex(vtkSmartPointer<vtkPolyData> polydata, vtkIdType vertexId);
 	std::vector<int> dijkstra(int startIdx, int endIdx, const TriMesh& triMesh);
 
 protected:
@@ -54,8 +55,6 @@ protected:
 	virtual void OnMouseWheelForward() override;
 	virtual void OnMouseWheelBackward() override;
 
-	void dijkstra(int start);
-
 	TriMesh convertToMesh(vtkSmartPointer<vtkPolyData>);
 	vtkSmartPointer<vtkPolyData> convertToPolyData(TriMesh);
 	vtkSmartPointer<vtkCellArray> mCellArray;
@@ -66,10 +65,6 @@ private:
 	vtkIdType mIdType;
 	Observer* mObserver;
 	vtkSmartPointer<vtkPoints> mVertex;
-	vector<pair<int, int> > graph[100001];
-	int d[100001];
-	int mCount;
-	QHash<int, vtkSmartPointer<vtkPoints>> Pickhash;;
 	QHash<int, OpenMesh::Vec3d> dvertexhash;
 	QHash< int, OpenMesh::Vec3d> lvertexhash;
 	OpenMesh::Vec3d mLvertex;

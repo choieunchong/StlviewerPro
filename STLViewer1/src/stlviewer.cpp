@@ -15,10 +15,12 @@ STLViewer::STLViewer(QWidget *parent)
 
     mColorDialog = new QColorDialog(this);
 
+  /*  mLight = vtkSmartPointer<vtkLight>::New();*/
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(ClickedOpen(bool)));  
     connect(ui->actionColor,&QAction::triggered, this, [this](bool) { mColorDialog->show(); });
     connect(mColorDialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(SetColor(QColor)));  
     connect(ui->opacitySlider, SIGNAL(valueChanged(int)), this, SLOT(SetOpacity(int)));
+    //connect(mAmbient, SIGNAL(clicked()), this, SLOT(on_AmbientButton_clicked()));
 }
 
 STLViewer::~STLViewer()
@@ -46,6 +48,12 @@ void STLViewer::ClickedOpen(bool)
     // Actor
     mActor = vtkSmartPointer<vtkActor>::New(); 
     mActor->SetMapper(mMapper); 
+   // mActor->GetProperty()->SetInterpolationToPhong(); //  Æþ ½¦ÀÌµù
+
+    //double ambient[3] = { 0.2, 0.2, 0.2 };
+    //mActor->GetProperty()->SetAmbientColor(ambient); //ambient ÁÖ±â
+    //double ambientColor[3];
+    //mActor->GetProperty()->GetAmbientColor(ambientColor);
 
     ui->openGLWidget->AddActor(mActor);
     ui->openGLWidget->GetPolyData(polyData);
@@ -73,8 +81,20 @@ void STLViewer::SetOpacity(int opacity)
     }
 } 
 
-void STLViewer::StlViewe()
+//void STLViewer::on_AmbientButton_clicked()
+//{
+//    qDebug() << "11111111111111";
+//    mLight->SetLightTypeToSceneLight();
+//    mLight->SetAmbientColor(1, 1, 1);
+//
+//   // mRenderer->AddLight(mLight);
+//
+//}
+
+void STLViewer::resizeEvent(QResizeEvent* event)
 {
+    //event->size().height();
+   /* mWViewer->setGeometry(11, 500, 300, 200);*/
+    //glClearColor(255, 255, 255, 0);
 
 }
-
