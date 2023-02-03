@@ -248,7 +248,6 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		//qDebug() << "delete Cell ID : " << cellPicker->GetCellId(); 
 		//triMesh.garbage_collection();
 
-	
 		vtkSmartPointer<vtkPolyData> meshToPoly = convertToPolyData(triMesh);
 		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->SetInputData(meshToPoly);
 		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->Modified();

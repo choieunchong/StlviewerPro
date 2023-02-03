@@ -11,46 +11,74 @@
 #include <QColorDialog.h>
 #include "CustomVTKWidget.h"
 #include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
+#include <vtkAxesActor.h>
+#include <vtkTransform.h>
 #include <QSlider>
+#include <QResizeEvent>
+#include <QLabel>
+#include <QFileDialog>
 #include <vtkLight.h>
-#include <QPushButton>
-#include <QWidget>
-#include <QVBoxLayout>
+#include <vtkCamera.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class STLViewer; }
 QT_END_NAMESPACE
 
-class STLViewer : public QMainWindow
+class STLViewer : public QWidget
 {
     Q_OBJECT
 
 public:
-    STLViewer(QWidget *parent = nullptr);
+    explicit STLViewer(QWidget *parent = nullptr);
     ~STLViewer();
-
-private:
-    Ui::STLViewer *ui;
-    CustomVTKWidget* customVTKWidget;
-
-    //vtkSmartPointer<vtkLight> mLight;
-    vtkSmartPointer<vtkActor> mActor;
-    QColorDialog* mColorDialog;  
-    QSlider* mSlider;
-    vtkSmartPointer<vtkPolyData> mPolyData;
-    //QPushButton* mAmbient;
-    //QWidget* mWViewer;
-    //QVBoxLayout* m_layout;
 
 protected:
     virtual void resizeEvent(QResizeEvent* event) override;
+    //void sendLightButton(QPushButton* button);
+private:
+    Ui::STLViewer* ui;
+    QSlider* m_Slider;
+    QPushButton* m_Cutbutton;
+    QPushButton* m_Openbutton;
+    QPushButton* m_Colorbutton;
+    QPushButton* m_LightButton;
+    QPushButton* m_Sliderbutton; //sliderbutton
+    QPushButton* m_AmbientPushButton;
+    QPushButton* m_DiffusePushButton;
+    QPushButton* m_SpecularPushButton;
+    QPushButton* m_SpotPushButton;
+
+
+    QHBoxLayout* m_Hlayout;
+    QHBoxLayout* m_HlayoutLight;
+    QVBoxLayout* m_Vlayout;
+    QWidget* w;
+    QWidget* wLight;
+
+    CustomVTKWidget* m_customVTKWidget;
+
+    vtkSmartPointer<vtkActor> mActor;
+    vtkSmartPointer<vtkLight> m_SpotLight;
+    vtkSmartPointer<vtkNamedColors> mcolors;
+    QColorDialog* mColorDialog; 
+    vtkSmartPointer<vtkLight> mLight;
+    vtkSmartPointer<vtkRenderer> m_Renderer;
+    vtkSmartPointer<vtkRenderWindow>m_RenderWindow;
+    vtkSmartPointer<QVTKInteractor>m_InteractorStyle;
+//signals:
+//    void sendButtonEmit();
 
 private slots:
-    void ClickedOpen(bool);                         // Menu -> Open 
+    void on_pushButton_clicked();
+    void ClickedOpen();
     void SetColor(QColor);                          // Actor Color Change
     void SetOpacity(int);                           // Acotr Opacity Change
-    //void on_AmbientButton_clicked();
+    void cliekedLightButton();
+    void on_AmbientButton_clicked();
+    void on_DiffusetButton_clicked();
+    void on_SpotPushButton_clicked();
 
 };
+
 #endif // STLVIEWER_H

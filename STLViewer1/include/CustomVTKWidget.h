@@ -20,6 +20,7 @@
 class CustomVTKWidget : public QVTKOpenGLNativeWidget , public Observer
 { 
     Q_OBJECT
+        
 
 public:
     CustomVTKWidget();
@@ -28,7 +29,6 @@ public:
 
     // Renderer Add Actor
     void AddActor(vtkSmartPointer<vtkActor>);
-
     void GetPolyData(vtkSmartPointer<vtkPolyData>);
     void GetSphere(vtkSmartPointer<vtkSphereSource>);
     void AddSphere(vtkSmartPointer<vtkActor>);
@@ -43,14 +43,13 @@ protected:
     QVTKInteractorAdapter* mvtkInteractorAdapter; 
     
     virtual void func(vtkSmartPointer<vtkActor>);
-   // virtual void funcRander(vtkSmartPointer<vtkRenderer>);
-
 
 private slots:
     void on_AmbientButton_clicked();
     void on_DiffusetButton_clicked();
     void on_SpotPushButton_clicked();
-
+    void ShowLightButton();
+   
 private: 
     vtkSmartPointer<vtkLight> greenLight;//
     vtkSmartPointer<vtkNamedColors> colors; //

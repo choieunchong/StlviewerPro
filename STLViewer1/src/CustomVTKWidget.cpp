@@ -1,5 +1,6 @@
 #pragma once
 #include "CustomVTKWidget.h"
+#include "stlviewer.h"
 #include <vtkGenericOpenGLRenderWindow.h>
 #include "CustomInteractorStyle.h"
 #include <QVTKInteractor.h>
@@ -32,8 +33,10 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	: QVTKOpenGLNativeWidget(parent)
 {
 
-	mAmbient = new QPushButton("Ambient", this);
+	mAmbient = new QPushButton("Ambient", this );
+
 	mDiffuseButton = new QPushButton("Diffuse", this);
+
 	mSpotPushButton = new QPushButton("SpotButton", this);
 
 
@@ -55,7 +58,7 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	vtkSmartPointer< vtkAxesActor> Axes = vtkSmartPointer< vtkAxesActor>::New();
 	mLight = vtkSmartPointer<vtkLight>::New();
 	colors = vtkSmartPointer<vtkNamedColors>::New();
-
+	
 	mColorDialog = new QColorDialog();
 
 	mRenderer = vtkSmartPointer<vtkRenderer>::New();
@@ -114,14 +117,9 @@ void CustomVTKWidget::func(vtkSmartPointer<vtkActor> Actor)
 	AddActor(Actor);
 }
 
-//void CustomVTKWidget::funcRander(vtkSmartPointer<vtkRenderer> Render)
-//{
-//
-//}
-
 void CustomVTKWidget::on_AmbientButton_clicked()
 {
-	qDebug() << "11111111111111";
+	qDebug() << "Ambient---------------";
 
 	//mColorDialog->show();
 
@@ -130,13 +128,15 @@ void CustomVTKWidget::on_AmbientButton_clicked()
 	double g = color.toRgb().greenF();
 	double b = color.toRgb().blueF();
 	
-	mLight->SetLightTypeToSceneLight();
+	//mLight->SetLightTypeToSceneLight();
+	mLight->SetLightTypeToCameraLight();
 	//mLight->SetLightTypeToCameraLight();
 
-	mLight->SetAmbientColor(0.1,0,0);
+	mLight->SetAmbientColor(r,g,b);
 	qDebug() << "mLight" << mLight;
 	mRenderer->AddLight(mLight);
 	mInteractor->Start();
+	
 }
 
 void CustomVTKWidget::on_DiffusetButton_clicked()
@@ -156,7 +156,7 @@ void CustomVTKWidget::on_DiffusetButton_clicked()
 
 void CustomVTKWidget::on_SpotPushButton_clicked()
 {
-	qDebug() << "22222222222222222222";
+	qDebug() << "SpotPushButton";
 	QColor color = mColorDialog->getColor();
 	double r = color.toRgb().redF();
 	double g = color.toRgb().greenF();
@@ -168,12 +168,10 @@ void CustomVTKWidget::on_SpotPushButton_clicked()
 
 	greenLight->PositionalOn();
 	greenLight->SetColor(r,g,b);
-	greenLight->SetPosition(-4.0, 4.0, -1.0);
+	greenLight->SetPosition(-3.0, 10.0, -1.0);
 	greenLight->SetIntensity(0.5);
 
-
 	mRenderer->AddLight(greenLight);
-
 
 	mRenderer->SetBackground(colors->GetColor3d("RoyalBlue").GetData());
 	mRenderer->GradientBackgroundOn();
@@ -181,4 +179,13 @@ void CustomVTKWidget::on_SpotPushButton_clicked()
 	mInteractor->Initialize();
 	mRenderWindow->Render();
 	mInteractor->Start();
+}
+
+void CustomVTKWidget::ShowLightButton()
+{
+	qDebug() << "showLightButton";
+	mAmbient->show();
+	mDiffuseButton->show();
+	mSpotPushButton->show();
+
 }
