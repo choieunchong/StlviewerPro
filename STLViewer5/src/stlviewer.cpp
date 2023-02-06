@@ -1,8 +1,15 @@
+<<<<<<< HEAD
+=======
+#pragma once
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 #include "stlviewer.h"
 #include "ui_stlviewer.h"
 #include "CustomInteractorStyle.h"
 #include <QDebug>
+<<<<<<< HEAD
 #include <QDebug>
+=======
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 #include <TriMesh.h>
 #include <algorithm> 
 
@@ -17,7 +24,10 @@ STLViewer::STLViewer(QWidget *parent) :
     mLight = vtkSmartPointer<vtkLight>::New();
     w = new QWidget(this);
     wLight = new QWidget(this);
+<<<<<<< HEAD
     m_WLightSlider = new QWidget(this);
+=======
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     m_Slider = new QSlider(Qt::Horizontal, this);
     m_Slider->setRange(0,100); 
@@ -27,17 +37,21 @@ STLViewer::STLViewer(QWidget *parent) :
     m_Colorbutton = new QPushButton("Color", this);
     m_LightButton = new QPushButton("Light", this);
 
+<<<<<<< HEAD
     m_LightXMoveButton = new QPushButton("XLight", this);
     m_LightYMoveButton = new QPushButton("YLight", this);
     m_LightZMoveButton = new QPushButton("ZLight", this);
 
     m_LightResetButton = new QPushButton("ResetLight", this);
 
+=======
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     m_AmbientPushButton = new QPushButton("AmbientButton", this);
     m_DiffusePushButton = new QPushButton("DiffuseButton", this);
     m_SpotPushButton = new QPushButton("SpotButton", this);
     m_SpecularPushButton = new QPushButton("SpecularButton", this);
     mColorDialog = new QColorDialog();
+<<<<<<< HEAD
 
     QLabel* AmbientLabel = new QLabel("AmbientLight");
     AmbientLabel->setStyleSheet("QLabel {color : #fff;}");
@@ -71,11 +85,17 @@ STLViewer::STLViewer(QWidget *parent) :
 
     m_HSpLightSliderLayout->addWidget(SpecularLabel);
     m_HSpLightSliderLayout->addWidget(m_SpecularLightSlider);
+=======
+    m_LightSlider = new QSlider(Qt::Horizontal, this);
+    m_LightSlider->setRange(0, 100);
+    m_LightSlider->setMaximumSize(QSize(200, 50));
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     //m_Colorbutton->setGeometry(0, 0, 100, 100);
     //m_Openbutton->setGeometry(0, 0, 100, 100);
     //m_Light->setGeometry(0, 0, 100, 100);
     //m_Cutbutton->setGeometry(0, 0, 100, 100);
+<<<<<<< HEAD
 
     m_Renderer = vtkSmartPointer<vtkRenderer>::New();
     m_RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -89,12 +109,24 @@ STLViewer::STLViewer(QWidget *parent) :
     m_Interactor = ui->openGLWidget->GetInteractor();
 
 
+=======
+    m_Renderer = vtkSmartPointer<vtkRenderer>::New();
+    m_RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+    m_Renderer = ui->openGLWidget->GetInteractor()->GetInteractorStyle()->GetCurrentRenderer();
+    m_RenderWindow = ui->openGLWidget->GetRenderWindow();
+    mcolors = vtkSmartPointer<vtkNamedColors>::New();
+    m_SpotLight = vtkSmartPointer<vtkLight>::New();
+    m_Interactor = vtkSmartPointer<QVTKInteractor>::New();
+    m_Interactor = ui->openGLWidget->GetInteractor();
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     m_Sliderbutton = new QPushButton("Opacity", this);
     connect(m_Sliderbutton, SIGNAL(clicked()), this, SLOT(on_pushButton_clicked()));
     connect(m_Openbutton, SIGNAL(clicked()), this, SLOT(ClickedOpen()));
     connect(m_Colorbutton, &QPushButton::clicked, this, [this](bool) { mColorDialog->show(); });
     connect(mColorDialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(SetColor(QColor)));
     connect(m_Slider, SIGNAL(valueChanged(int)), this, SLOT(SetOpacity(int)));
+<<<<<<< HEAD
 
     connect(m_LightButton, SIGNAL(clicked()), this, SLOT(cliekedLightButton()));
     connect(m_AmbientPushButton, SIGNAL(clicked()), this, SLOT(on_AmbientButton_clicked())); //Ambient
@@ -110,10 +142,19 @@ STLViewer::STLViewer(QWidget *parent) :
     connect(m_LightYMoveButton, SIGNAL(clicked()), this, SLOT(SetLightYMove()));
     connect(m_LightZMoveButton, SIGNAL(clicked()), this, SLOT(SetLightZMove()));
     connect(m_LightResetButton, SIGNAL(clicked()), this, SLOT(SetResetLight()));
+=======
+    connect(m_LightButton, SIGNAL(clicked()), this, SLOT(cliekedLightButton())); //라이트 버튼 이 눌렀을때 그에 해당하는 버튼을 보여준다.
+    connect(m_AmbientPushButton, SIGNAL(clicked()), this, SLOT(on_AmbientButton_clicked())); //Ambient 버튼 
+    connect(m_DiffusePushButton, SIGNAL(clicked()), this, SLOT(on_DiffusetButton_clicked())); //Diffuse 버튼
+    connect(m_SpecularPushButton, SIGNAL(clicked()), this, SLOT(on_SpecularPushButton_clicked()));
+    connect(m_SpotPushButton, SIGNAL(clicked()), this, SLOT(on_SpotPushButton_clicked()));// Spot 버튼
+  
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     m_Hlayout = new QHBoxLayout();
     m_Vlayout = new QVBoxLayout();
     m_HlayoutLight = new QHBoxLayout();
+<<<<<<< HEAD
     m_VlayoutLightSlider = new QVBoxLayout();
 
     m_Slider->hide();
@@ -127,6 +168,11 @@ STLViewer::STLViewer(QWidget *parent) :
 
     m_VlayoutLightSlider->addWidget(m_LightResetButton);
 
+=======
+    m_Slider->hide();
+    m_LightSlider->hide();
+    //m_layout->addWidget(m_Slider);
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     m_Hlayout->addWidget(m_Openbutton); 
     m_Hlayout->addWidget(m_Colorbutton); 
     m_Hlayout->addWidget(m_Cutbutton); 
@@ -134,6 +180,7 @@ STLViewer::STLViewer(QWidget *parent) :
     m_Hlayout->addWidget(m_Sliderbutton); 
 
     m_HlayoutLight->addWidget(m_AmbientPushButton);
+<<<<<<< HEAD
     m_HlayoutLight->addWidget(m_DiffusePushButton);
     m_HlayoutLight->addWidget(m_SpecularPushButton);
     m_HlayoutLight->addWidget(m_SpotPushButton);
@@ -148,13 +195,35 @@ STLViewer::STLViewer(QWidget *parent) :
     m_Vlayout->addLayout(m_HlayoutLight);
     w->setLayout(m_Vlayout);
     w->setMinimumSize(500, 100);
+=======
+    m_AmbientPushButton->hide();
+    m_HlayoutLight->addWidget(m_DiffusePushButton);
+    m_DiffusePushButton->hide();
+    m_HlayoutLight->addWidget(m_SpecularPushButton);
+    m_SpecularPushButton->hide();
+    m_HlayoutLight->addWidget(m_SpotPushButton);
+    m_SpotPushButton->hide();
+   // wLight->setLayout(m_HlayoutLight);
+    
+    m_Vlayout->addLayout(m_Hlayout);
+    m_Vlayout->addWidget(m_Slider);
+    m_Vlayout->addLayout(m_HlayoutLight);
+    m_Vlayout->addWidget(m_LightSlider);
+
+    w->setLayout(m_Vlayout);
+    w->setMinimumSize(500, 100);
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     w->setStyleSheet("QWidget::horver{"
                      "background-color:#fff;"
                      "border: 10px;}");
 
     wLight->setLayout(m_HlayoutLight);
+<<<<<<< HEAD
     wLight->setMinimumSize(500, 100);
     wLight->hide();
+=======
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 STLViewer::~STLViewer()
@@ -168,8 +237,11 @@ void STLViewer::resizeEvent(QResizeEvent *event)
     int width = event->size().width(); 
     w->move(width/2 - 200, 50);  
     wLight->move(width / 2 - 200, 100);
+<<<<<<< HEAD
     m_WLightSlider->move(0, 100);
 
+=======
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 void STLViewer::SetColor(QColor color)
@@ -194,6 +266,7 @@ void STLViewer::SetOpacity(int opacity)
 
 void STLViewer::cliekedLightButton()
 {
+<<<<<<< HEAD
         static int count = 0;
 
         switch (++count)
@@ -209,6 +282,29 @@ void STLViewer::cliekedLightButton()
             break;
         }
     }
+=======
+    static int count = 0;
+
+    switch (++count)
+    {
+    case 1:
+        m_AmbientPushButton->show();
+        m_DiffusePushButton->show();
+        m_SpecularPushButton->show();
+        m_SpotPushButton->show();
+        m_LightSlider->show();
+        break;
+    default:
+        count = 0;
+        m_AmbientPushButton->hide();
+        m_DiffusePushButton->hide();
+        m_SpecularPushButton->hide();
+        m_SpotPushButton->hide();
+        m_LightSlider->hide();
+        break;
+    }
+}
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
 void STLViewer:: on_pushButton_clicked()
 {
@@ -245,6 +341,7 @@ void STLViewer::ClickedOpen()
     //ui->openGLWidget->GetPolyData(polyData);
     qDebug() << "Actor" << mActor;
     qDebug() << "PolyData" << polyData;
+<<<<<<< HEAD
     ui->openGLWidget->GetInteractor()->GetInteractorStyle()->GetCurrentRenderer()->ResetCamera();
     ui->openGLWidget->GetRenderWindow()->Render();
 }
@@ -331,19 +428,33 @@ void STLViewer::SetLightZMove()
     m_LightActor->SetLight(mLight);
     m_Renderer->AddViewProp(m_LightActor);
     ui->openGLWidget->GetRenderWindow()->Render();
+=======
+}
+void STLViewer::SetLightChange()
+{
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 
 void STLViewer::on_AmbientButton_clicked()
 {
     qDebug() << "Ambient---------------";
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     double ambient = 0.4;
     double diffuse = 0.4;
     double specular = 0.4;
     double spbase = 0.5;
     double spscale = 0.1;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     double specularpower = spbase * spscale;
 
     QColor color = mColorDialog->getColor();
@@ -353,7 +464,11 @@ void STLViewer::on_AmbientButton_clicked()
 
     mLight->SetLightTypeToSceneLight();
     //mLight->SetLightTypeToCameraLight();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     mLight->SetAmbientColor(r, g, b);
     mActor->GetProperty()->SetAmbientColor(r, g, b);
     mActor->GetProperty()->SetAmbient(ambient);
@@ -367,16 +482,25 @@ void STLViewer::on_AmbientButton_clicked()
 
     m_Renderer->Render();
     m_Interactor->Start();
+<<<<<<< HEAD
     ui->openGLWidget->GetRenderWindow()->Render();
+=======
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 void STLViewer::on_DiffusetButton_clicked()
 {
+<<<<<<< HEAD
+=======
+    qDebug() << "Diffuse";
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     QColor color = mColorDialog->getColor();
     double r = color.toRgb().redF();
     double g = color.toRgb().greenF();
     double b = color.toRgb().blueF();
 
+<<<<<<< HEAD
     //mLight->SetLightTypeToSceneLight();
     mLight->SetLightTypeToCameraLight();
 
@@ -385,6 +509,15 @@ void STLViewer::on_DiffusetButton_clicked()
     m_Renderer->AddLight(mLight);
     m_InteractorStyle->Start();
     ui->openGLWidget->GetRenderWindow()->Render();
+=======
+    mLight->SetLightTypeToSceneLight();
+    mLight->SetLightTypeToCameraLight();
+
+    mLight->SetDiffuseColor(r, g, b);
+    m_Renderer->AddLight(mLight);
+    m_Interactor->Start();
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 void STLViewer::on_SpotPushButton_clicked()
@@ -396,27 +529,46 @@ void STLViewer::on_SpotPushButton_clicked()
     double b = color.toRgb().blueF();
 
     m_Renderer->ResetCamera();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     m_Renderer->GetActiveCamera()->Azimuth(40.0);
     m_Renderer->GetActiveCamera()->Elevation(30.0);
 
     m_SpotLight->PositionalOn();
     m_SpotLight->SetColor(r, g, b);
     m_SpotLight->SetPosition(-3.0, 10.0, -1.0);
+<<<<<<< HEAD
     m_SpotLight->SetIntensity(0.5);
+=======
+    m_SpotLight->SetIntensity(0.7);
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     m_Renderer->AddLight(m_SpotLight);
 
     m_SpotLight->SetLightTypeToCameraLight();
+<<<<<<< HEAD
     m_SpotLight->SetPosition(m_Renderer->GetActiveCamera()->GetPosition()); 
     m_SpotLight->SetFocalPoint(m_Renderer->GetActiveCamera()->GetFocalPoint()); 
+=======
+    m_SpotLight->SetPosition(m_Renderer->GetActiveCamera()->GetPosition()); // 조명 위치 설정
+    m_SpotLight->SetFocalPoint(m_Renderer->GetActiveCamera()->GetFocalPoint()); // 비추는 지점
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     m_Renderer->SetBackground(mcolors->GetColor3d("RoyalBlue").GetData());
     m_Renderer->GradientBackgroundOn();
 
+<<<<<<< HEAD
     m_InteractorStyle->Initialize();
     m_RenderWindow->Render();
     m_InteractorStyle->Start();
     ui->openGLWidget->GetRenderWindow()->Render();
+=======
+    m_Interactor->Initialize();
+    m_RenderWindow->Render();
+    m_Interactor->Start();
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 void STLViewer::on_SpecularPushButton_clicked()
@@ -425,7 +577,12 @@ void STLViewer::on_SpecularPushButton_clicked()
     double diffuse = 0.4;
     double specular = 0.4;
     double spbase = 0.5;
+<<<<<<< HEAD
     double spscale = 1.0;
+=======
+    double spscale = 0.1;
+    
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
     double specularpower = spbase * spscale;
 
@@ -434,6 +591,7 @@ void STLViewer::on_SpecularPushButton_clicked()
     double g = color.toRgb().greenF();
     double b = color.toRgb().blueF();
 
+<<<<<<< HEAD
     mLight->SetPosition(0, 1.0, 1.0);
     mLight->SetConeAngle(0.3);
    // LightActor->GetConeProperty()->SetColor(r, g, b);
@@ -445,10 +603,18 @@ void STLViewer::on_SpecularPushButton_clicked()
 
     m_LightActor->SetLight(mLight);
 
+=======
+    mLight->SetLightTypeToSceneLight();
+    //mLight->SetLightTypeToCameraLight();
+
+    mLight->SetAmbientColor(r, g, b);
+    mActor->GetProperty()->SetSpecularColor(r, g, b);
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     mActor->GetProperty()->SetAmbient(ambient);
     mActor->GetProperty()->SetDiffuse(diffuse);
     mActor->GetProperty()->SetSpecular(specular);
     mActor->GetProperty()->SetSpecularPower(specularpower);
+<<<<<<< HEAD
     mActor->GetProperty()->SetSpecularColor(r, g, b);
     
     //mActor->AddPosition(position.data());
@@ -471,6 +637,17 @@ void STLViewer::SetResetLight()
 }
 
 
+=======
+
+    qDebug() << "mLight" << mLight;
+    m_Renderer->AddLight(mLight);
+    m_Renderer->SetAmbient(0.5, 0.5, 0.5);
+
+    m_Renderer->Render();
+    m_Interactor->Start();
+}
+
+>>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 //void STLViewer::sendLightButton(QPushButton* button)
 //{
 //    m_Light = button;

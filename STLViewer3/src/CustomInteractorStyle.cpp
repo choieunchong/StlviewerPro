@@ -9,13 +9,7 @@ using namespace std;
 
 CustomInteractorStyle::CustomInteractorStyle()
 {
-	m_Camera = vtkSmartPointer<vtkCamera>::New();
-	m_Renderer = vtkSmartPointer<vtkRenderer>::New();
-	m_Light = vtkSmartPointer<vtkLight>::New();
-<<<<<<< HEAD
-=======
-	//m_RendererWindow = vtkSmartPointer<vtkRenderWindow>::New();
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
+
 }
 
 CustomInteractorStyle::~CustomInteractorStyle()
@@ -105,10 +99,6 @@ void CustomInteractorStyle::OnLeftButtonDown()
 		}
 		vertexIdxs.push_back(vIdx.idx()); // 처음값 파란색점
 	
-<<<<<<< HEAD
-
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 		mVertex = vtkSmartPointer<vtkPoints>::New();
 		mVertex->InsertNextPoint(minpoint[0], minpoint[1], minpoint[2]);
 		qDebug() << "minpoint---------------" << mVertex;
@@ -136,12 +126,6 @@ void CustomInteractorStyle::OnLeftButtonDown()
 
 		}
 
-<<<<<<< HEAD
-		//현재 찍은 점의 vertex 의 개수를 알때 
-	   // 다음점의 꼭지점을 알고 가사이의 간선의 개수를 INF라 할때 어떻게 할 것 인가?
-
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 		vtkNew<vtkSphereSource> sphereSource1;
 		sphereSource1->SetCenter(minpoint[0], minpoint[1], minpoint[2]);
 		sphereSource1->SetRadius(0.8);
@@ -201,51 +185,6 @@ void CustomInteractorStyle::OnMouseWheelBackward()
 	__super::OnMouseWheelBackward();
 }
 
-void CustomInteractorStyle::OnKeyPress()
-<<<<<<< HEAD
-{
-=======
-{	
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
-	vtkRenderWindowInteractor* rwi = this->Interactor;
-	std::string key = rwi->GetKeySym();
-
-	if (key == "Up") {
-<<<<<<< HEAD
-
-		//m_Light->SetPosition(m_Light->GetPosition()[0],
-		//	m_Light->GetPosition()[1], 
-		//	m_Light->GetPosition()[2] + 1.0);
-
-		//m_Light->SetPosition(m_Renderer->GetActiveCamera()->GetPosition());
-		//m_RendererWindow->Render();
-
-		//m_Camera = m_Renderer->GetActiveCamera();
-		//m_Camera->Elevation(10);
-		//m_Renderer->GetActiveCamera()->Elevation(30.0);
-		//m_Renderer->ResetCameraClippingRange();	
-=======
-		
-		m_Light->SetPosition(m_Light->GetPosition()[0],
-							 m_Light->GetPosition()[1] + 10.0,
-						     m_Light->GetPosition()[2]);
-
-		m_Light->SetPosition(m_Renderer->GetActiveCamera()->GetPosition());
-		//m_RendererWindow->Render();
-
-		m_Camera = m_Renderer->GetActiveCamera();
-		m_Camera->Elevation(10);
-		m_Renderer->ResetCameraClippingRange();
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
-
-		qDebug() << "OnKeyUp";
-	}
-}
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 void CustomInteractorStyle::GetPolyData(vtkSmartPointer<vtkPolyData> polyData)
 {
 	mPolyData = polyData;

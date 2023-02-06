@@ -5,10 +5,6 @@
 #include "CustomInteractorStyle.h"
 #include <QVTKInteractor.h>
 
-<<<<<<< HEAD
-#include <vtkActor.h>
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 #include <vtkCamera.h>
 #include <vtkCellArray.h>
 #include <vtkFloatArray.h>
@@ -21,14 +17,7 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
 #include <vtkRenderer.h> 
-<<<<<<< HEAD
-#include <vtkLight.h>
-#include <QPushButton>
-#include <QWidget>
-#include <QVBoxLayout>
-=======
 
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
 
 CustomVTKWidget::CustomVTKWidget()
@@ -40,10 +29,6 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	: QVTKOpenGLNativeWidget(parent)
 {
 
-<<<<<<< HEAD
-	vtkOrientationMarkerWidget* vtkOrient = vtkOrientationMarkerWidget::New();
-	vtkSmartPointer< vtkAxesActor> Axes = vtkSmartPointer< vtkAxesActor>::New();
-=======
 	//mAmbient = new QPushButton("Ambient", this );
 
 	//mDiffuseButton = new QPushButton("Diffuse", this);
@@ -71,7 +56,6 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	//colors = vtkSmartPointer<vtkNamedColors>::New();
 	//
 	//mColorDialog = new QColorDialog();
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
 	mRenderer = vtkSmartPointer<vtkRenderer>::New();
 	mRenderer->SetBackground(0.2, 0.2, 0.2); // 배경색 지정
@@ -94,12 +78,9 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	vtkOrient->SetEnabled(1);
 	vtkOrient->InteractiveOff(); 
 
-<<<<<<< HEAD
-=======
 	//connect(mAmbient, SIGNAL(clicked()), this, SLOT(on_AmbientButton_clicked()));
 	//connect(mDiffuseButton, SIGNAL(clicked()), this, SLOT(on_DiffusetButton_clicked()));
 	//connect(mSpotPushButton, SIGNAL(clicked()), this, SLOT(on_SpotPushButton_clicked()));
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 CustomVTKWidget::~CustomVTKWidget()
@@ -110,10 +91,6 @@ CustomVTKWidget::~CustomVTKWidget()
 void CustomVTKWidget::AddActor(vtkSmartPointer<vtkActor> actor)
 {
 	mRenderer->AddActor(actor);
-<<<<<<< HEAD
-	mRenderWindow->Render();
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 }
 
 void CustomVTKWidget::GetPolyData(vtkSmartPointer<vtkPolyData> polyData)
@@ -135,8 +112,6 @@ void CustomVTKWidget::func(vtkSmartPointer<vtkActor> Actor)
 { 
 	AddActor(Actor);
 }
-<<<<<<< HEAD
-=======
 
 //void CustomVTKWidget::on_AmbientButton_clicked()
 //{
@@ -210,4 +185,3 @@ void CustomVTKWidget::func(vtkSmartPointer<vtkActor> Actor)
 //	mSpotPushButton->show();
 //
 //}
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088

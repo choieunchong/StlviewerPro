@@ -10,14 +10,11 @@
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkAxesActor.h>
 #include <QDebug>
-<<<<<<< HEAD
-=======
 //#include <vtkLight.h>
 //#include <QPushButton>
 //#include <QWidget>
 //#include <QHBoxLayout>
 //#include <QColorDialog>
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 
 
 class CustomVTKWidget : public QVTKOpenGLNativeWidget , public Observer
@@ -44,11 +41,6 @@ protected:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> mRenderWindow; 
     vtkSmartPointer<QVTKInteractor> mInteractor;
     QVTKInteractorAdapter* mvtkInteractorAdapter; 
-<<<<<<< HEAD
-    virtual void func(vtkSmartPointer<vtkActor>);
-
-private: 
-=======
     
     virtual void func(vtkSmartPointer<vtkActor>);
 
@@ -69,6 +61,5 @@ private:
     //QWidget* mWViewer;
     //QHBoxLayout* mlayout;
     //QColorDialog* mColorDialog;
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
     CustomInteractorStyle* customInteractorStyle;
 };

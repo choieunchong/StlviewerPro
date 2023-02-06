@@ -29,13 +29,8 @@
 #include <queue>
 #include <QHash>
 #include <vtkIdList.h>
-<<<<<<< HEAD
 #include <vtkLight.h>
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
-#include <vtkCamera.h>
-#include <vtkLight.h>
-#include <vtkRenderWindow.h>
+
 
 using namespace std;
 
@@ -56,47 +51,20 @@ protected:
 	virtual void OnRightButtonUp() override;
 	virtual void OnLeftButtonDown() override;
 	virtual void OnLeftButtonUp() override;
-<<<<<<< HEAD
 
-=======
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 	virtual void OnMouseWheelForward() override;
 	virtual void OnMouseWheelBackward() override;
 
-	virtual void OnKeyPress() override;
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 	TriMesh convertToMesh(vtkSmartPointer<vtkPolyData>);
 	vtkSmartPointer<vtkPolyData> convertToPolyData(TriMesh);
 	vtkSmartPointer<vtkCellArray> mCellArray;
 private:
-<<<<<<< HEAD
-	vtkSmartPointer<vtkLight> m_Light;
-	vtkSmartPointer<vtkCamera> m_Camera;
 	vtkSmartPointer<vtkPolyData> mPolyData;
 	vtkSmartPointer<vtkSphereSource> mSphere;
 	vtkSmartPointer<vtkActor> mActor;
 	vtkIdType mIdType;
 	Observer* mObserver;
-	vtkSmartPointer<vtkRenderer>m_Renderer;
 	vtkSmartPointer<vtkPoints> mVertex;
-=======
-	vtkSmartPointer<vtkPolyData> mPolyData;
-	vtkSmartPointer<vtkSphereSource> mSphere;
-	vtkSmartPointer<vtkActor> mActor;
-	vtkSmartPointer<vtkCamera> m_Camera;
-	vtkSmartPointer<vtkLight> m_Light;
-	//vtkSmartPointer<vtkRenderWindow> m_RendererWindow;
-
-	vtkIdType mIdType;
-	Observer* mObserver;
-	vtkSmartPointer<vtkPoints> mVertex;
-	vtkSmartPointer<vtkRenderer>m_Renderer;
->>>>>>> 5d342e87858d7bbe42f81d7e8a0016ccc961c088
 	QHash<int, OpenMesh::Vec3d> dvertexhash;
 	QHash< int, OpenMesh::Vec3d> lvertexhash;
 	OpenMesh::Vec3d mLvertex;
