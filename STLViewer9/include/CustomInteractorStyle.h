@@ -54,7 +54,7 @@ protected:
 	virtual void OnMouseWheelForward() override;
 	virtual void OnMouseWheelBackward() override;
 
-	virtual void OnMouseMove() override;
+	//virtual void OnMouseMove() override;
 	virtual void OnKeyPress() override;
 
 	TriMesh convertToMesh(vtkSmartPointer<vtkPolyData>);

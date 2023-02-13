@@ -212,16 +212,16 @@ void CustomInteractorStyle::OnKeyPress()
 	}
 }
 
-void CustomInteractorStyle::OnMouseMove()
-{
-	qDebug() << "OnMouseMove";
-	__super::OnMouseMove();
-
-	int x = this->Interactor->GetEventPosition()[0];
-	int y = this->Interactor->GetEventPosition()[1];
-	
-
-}
+//void CustomInteractorStyle::OnMouseMove()
+//{
+//	qDebug() << "OnMouseMove";
+//	__super::OnMouseMove();
+//
+//	int x = this->Interactor->GetEventPosition()[0];
+//	int y = this->Interactor->GetEventPosition()[1];
+//	
+//
+//}
 
 
 void CustomInteractorStyle::GetPolyData(vtkSmartPointer<vtkPolyData> polyData)

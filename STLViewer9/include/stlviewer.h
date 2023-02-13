@@ -23,7 +23,6 @@
 #include <QPushButton>
 #include <vtkLightActor.h>
 #include <QLabel>
-#include <vtkSTLReader.h>
 #include <vtkTexture.h>
 #include <vtkSTLWriter.h>
 #include <QMessageBox>
@@ -32,13 +31,10 @@
 #include <vtkTransform.h> // move 이벤트 구현 해야 할 것
 
 #include <vtkPNGReader.h>
-#include <vtkImageData.h>
 #include <vtkTextureMapToSphere.h>
 #include <vtkTextureMapToPlane.h>
-#include <vtkImplicitTextureCoords.h>
+#include <vtkImageData.h>
 
-#include <vtkRenderStepsPass.h>
-#include <vtkOutlineGlowPass.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class STLViewer; }
@@ -150,6 +146,7 @@ private slots:
     void SetPhongChange();     // 퐁 재질로 변경
     void SetGouraudChange();   // 고러드 재질로 변경
     void SetConeAngleChange(int); // cone 의 각도를 설정 한다.
+  //  void MoveButton(); // 
 };
 
 #endif // STLVIEWER_H

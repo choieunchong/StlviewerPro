@@ -292,6 +292,33 @@ void STLViewer::cliekedLightButton()
 
     }
 
+
+//void STLViewer::MoveButton()
+//{
+//    int* pos = m_Interactor->GetEventPosition();
+//    double worldPos[3];
+//    m_Renderer->SetDisplayPoint(pos[0], pos[1], 0.0);
+//    m_Renderer->DisplayToWorld();
+//    m_Renderer->GetWorldPoint(worldPos);
+//    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+//    transform->Translate(worldPos);
+//    mActor->SetUserTransform(transform);
+//
+//    m_Renderer->Render();
+//    m_RenderWindow->AddRenderer(m_Renderer);
+//    m_Interactor->SetRenderWindow(m_RenderWindow);
+//
+//    vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+//    m_Interactor->SetInteractorStyle(style);
+//    m_Interactor->AddObserver(vtkCommand::LeftButtonPressEvent, );
+//
+//    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+//    // set up actor here ...
+//
+//    m_Renderer->AddActor(actor);
+//    m_Renderer->ResetCamera();
+//    m_RenderWindow->Render();
+//}
 void STLViewer:: on_pushButton_clicked()
 {
     qDebug() << "11111";
@@ -314,18 +341,6 @@ void STLViewer::ClickedOpen()
     m_STLReader->SetFileName(fileName.c_str());
     qDebug() << " Open STL File" << m_STLReader->GetFileName();
     m_STLReader->Update();
-
-    // Create the render pass collection
-    vtkSmartPointer<vtkRenderStepsPass> basicPasses =
-        vtkSmartPointer<vtkRenderStepsPass>::New();
-
-    // Add the outline glow pass to the render pass collection
-    vtkSmartPointer<vtkOutlineGlowPass> outlineGlowPass =
-        vtkSmartPointer<vtkOutlineGlowPass>::New();
-    outlineGlowPass->SetDelegatePass(basicPasses);
-
-   // mRenderer->SetPass(outlineGlowPass);
-
 
     // Mapper
     m_PolyData->DeepCopy(m_STLReader->GetOutput());
@@ -501,25 +516,25 @@ void STLViewer::SetTexture()
     vtkSmartPointer<vtkPNGReader> pngReader =
         vtkSmartPointer<vtkPNGReader>::New();
     pngReader->SetFileName(fileName.c_str());
-    
     pngReader->Update();
     qDebug() << "pngRender" << pngReader->GetFileName();
-    
 
-    m_PolyData->DeepCopy(pngReader->GetOutput());
-    mMapper->SetInputData(m_PolyData);
 
-    //imageData->SetSpacing(1.0, 1.0, 1.0);
-
+    //m_PolyData->DeepCopy(pngReader->GetOutput());
+    //mMapper->SetInputData(m_PolyData);
    // qDebug() << "m_polyData" << m_PolyData;
+
     vtkSmartPointer<vtkTexture> m_Texture =
         vtkSmartPointer<vtkTexture>::New();
 
     qDebug() << "m_Texture" << m_Texture->GetTextureUnit();
     m_Texture->SetInputConnection(pngReader->GetOutputPort());
-    m_Texture->RepeatOn();
-    m_Texture->SetBlendingMode(VTK_TEXTURE_BLENDING_MODE_MODULATE);
+
+   // m_Texture->SetInputData(pngReader->GetOutput());
     m_Texture->InterpolateOn();
+    
+    //m_Texture->SetBlendingMode(VTK_TEXTURE_BLENDING_MODE_MODULATE);
+
    
 
     //vtkSmartPointer<vtkTextureMapToSphere> textureMap = vtkSmartPointer<vtkTextureMapToSphere>::New();
@@ -539,28 +554,43 @@ void STLViewer::SetTexture()
     //double scale[3] = { sx, sy, sz };
 
 
-    vtkSmartPointer<vtkTextureMapToPlane> textureMapToPlane = // 한개의 png 파일을 입히기 위한 함수
-        vtkSmartPointer<vtkTextureMapToPlane>::New();
 
-    textureMapToPlane->SetInputConnection(m_STLReader->GetOutputPort());
+    vtkSmartPointer<vtkTextureMapToSphere> textureMapToSphere = // 한개의 png 파일을 입히기 
+        vtkSmartPointer<vtkTextureMapToSphere>::New();
+
+    textureMapToSphere->SetInputData(m_PolyData);
+    
+    textureMapToSphere->PreventSeamOff();
+    textureMapToSphere->Update(); 
+    //textureMapToSphere->SetCenter(0, 0, 0);
+    textureMapToSphere->AutomaticSphereGenerationOn();
+    textureMapToSphere->SetInputConnection(m_STLReader->GetOutputPort());
+
+
+
    // textureMapToPlane->SetAutomaticPlaneGeneration(false);
-    textureMapToPlane->SetAutomaticPlaneGeneration(true);
-    textureMapToPlane->SetOrigin(0.5, 0.5, 0.0); // 평면의 원점을 정의 한다.
+    //textureMapToPlane->SetAutomaticPlaneGeneration(true);
+    //textureMapToPlane->SetOrigin(0.5, 0.5, 0.0); // 평면의 원점을 정의 한다.
     //textureMapToPlane->GetGlobalWarningDisplay();
     //textureMapToPlane->SetPoint1(50.0, 50.0, 0.0);
-    textureMapToPlane->SetPoint2(0.5, 0.5, 0.5);
+    //textureMapToPlane->SetPoint2(20, 20, 20);
    // textureMapToPlane->SetNormal(0.5, 0.5, 0.0); //평면 법선을 지정한다.
     //textureMapToPlane->SetSRange(1, 0.5);
     //textureMapToPlane->SetTRange(1, 0.5);
-    mMapper->SetInputConnection(textureMapToPlane->GetOutputPort());
-
+     
+    mMapper->SetInputConnection(textureMapToSphere->GetOutputPort());
+    mMapper->SetInputArrayToProcess(0,0,0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "TextureCoordinates");
+   
+   // mMapper->SetInputConnection(transformTexture->GetOutputPort());
+   
     //qDebug()<<"textureMap_Origin" << textureMapToPlane->GetOrigin();
-  //  mMapper->SetInputConnection(textureMap->GetOutputPort());
+   // mMapper->SetInputConnection(textureMap->GetOutputPort());
     //m_Texture->SetQualityTo32Bit();
     //m_Texture->GetQuality();
 
     mActor->SetMapper(mMapper);
     mActor->SetTexture(m_Texture);
+    
 
     qDebug() << "texture" << m_Texture;
     m_Renderer->AddActor(mActor);
