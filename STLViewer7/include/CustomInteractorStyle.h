@@ -21,10 +21,7 @@
 #include <vtkTriangle.h>
 #include "observer.h"
 #include "TriMesh.h"
-#include <vtkDijkstraGraphGeodesicPath.h> //Dijkstra
-#include <vtkMutableDirectedGraph.h>
 #include <vtkVector.h>
-#include <vtkGraphToPolyData.h>
 #include <vector>
 #include <queue>
 #include <QHash>
@@ -63,7 +60,6 @@ protected:
 	vtkSmartPointer<vtkPolyData> convertToPolyData(TriMesh);
 	vtkSmartPointer<vtkCellArray> mCellArray;
 private:
-	vtkSmartPointer<vtkLight> m_Light;
 	vtkSmartPointer<vtkCamera> m_Camera;
 	vtkSmartPointer<vtkPolyData> mPolyData;
 	vtkSmartPointer<vtkSphereSource> mSphere;

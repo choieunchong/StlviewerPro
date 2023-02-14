@@ -31,6 +31,9 @@
 #include <vtkOutlineFilter.h>
 #include <vtkTransform.h> // move 이벤트 구현 해야 할 것
 
+#include <vtkTextureMapToSphere.h>
+
+
 #include < vtkTransformTextureCoords.h>
 #include <vtkPNGReader.h>
 #include <vtkRenderWindowInteractor.h>

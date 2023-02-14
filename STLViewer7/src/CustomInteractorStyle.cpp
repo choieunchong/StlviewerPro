@@ -9,9 +9,6 @@ using namespace std;
 
 CustomInteractorStyle::CustomInteractorStyle()
 {
-	m_Camera = vtkSmartPointer<vtkCamera>::New();
-	m_Renderer = vtkSmartPointer<vtkRenderer>::New();
-	m_Light = vtkSmartPointer<vtkLight>::New();
 }
 
 CustomInteractorStyle::~CustomInteractorStyle()
@@ -31,149 +28,149 @@ void CustomInteractorStyle::OnRightButtonUp()
 
 void CustomInteractorStyle::OnLeftButtonDown()
 {
-	int* pos = GetInteractor()->GetEventPosition();
-	static std::vector<int> vertexIdxs;
+	//int* pos = GetInteractor()->GetEventPosition();
+	//static std::vector<int> vertexIdxs;
 
-	vtkSmartPointer<vtkCellPicker>cellPicker = vtkSmartPointer<vtkCellPicker>::New(); //vertex를 잡기위한 picker
-	cellPicker->SetTolerance(0.00001); // 영역 의 값을 잡는다
+	//vtkSmartPointer<vtkCellPicker>cellPicker = vtkSmartPointer<vtkCellPicker>::New(); //vertex를 잡기위한 picker
+	//cellPicker->SetTolerance(0.00001); // 영역 의 값을 잡는다
 
-	// Pick from this location
-	cellPicker->Pick(pos[0], pos[1], 0, GetCurrentRenderer());
+	//// Pick from this location
+	//cellPicker->Pick(pos[0], pos[1], 0, GetCurrentRenderer());
 
-	double* worldPosition = cellPicker->GetPickPosition();
+	//double* worldPosition = cellPicker->GetPickPosition();
 
-	qDebug() << "Cell id is : " << cellPicker->GetCellId();
+	//qDebug() << "Cell id is : " << cellPicker->GetCellId();
 
-	if (cellPicker->GetCellId() != -1)
-	{
-		qDebug() << "Pick Position is : (" << worldPosition[0] << ", " << worldPosition[1] << ", " << worldPosition[2] << ")";
-		vtkNew<vtkNamedColors> colors;
+	//if (cellPicker->GetCellId() != -1)
+	//{
+	//	qDebug() << "Pick Position is : (" << worldPosition[0] << ", " << worldPosition[1] << ", " << worldPosition[2] << ")";
+	//	vtkNew<vtkNamedColors> colors;
 
-		// Create a sphere
-		vtkNew<vtkSphereSource> sphereSource;
-		sphereSource->SetCenter(worldPosition[0], worldPosition[1], worldPosition[2]);
-		sphereSource->SetRadius(0.5);
-		// Make the surface smooth.
-		sphereSource->SetPhiResolution(100);
-		sphereSource->SetThetaResolution(100);
-
-
-		OpenMesh::Vec3d pickingPosition(worldPosition[0], worldPosition[1], worldPosition[2]);
-
-		vtkNew<vtkPolyDataMapper> mapper;
-		mapper->SetInputConnection(sphereSource->GetOutputPort()); //sphererSource 의 주소값을 mapper에 담는다
+	//	// Create a sphere
+	//	vtkNew<vtkSphereSource> sphereSource;
+	//	sphereSource->SetCenter(worldPosition[0], worldPosition[1], worldPosition[2]);
+	//	sphereSource->SetRadius(0.5);
+	//	// Make the surface smooth.
+	//	sphereSource->SetPhiResolution(100);
+	//	sphereSource->SetThetaResolution(100);
 
 
-		vtkNew<vtkActor> mActor;
-		mActor->SetMapper(mapper);
-		mActor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
-		mActor->GetProperty()->SetLineWidth(4);
+	//	OpenMesh::Vec3d pickingPosition(worldPosition[0], worldPosition[1], worldPosition[2]);
 
-		mObserver->func(mActor);
-
-		vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput();  
-		TriMesh triMesh = convertToMesh(polyData);
-		cout << "triMesh " << triMesh.n_vertices(); // 전체 점을 구한다.
-
-		qDebug() << "fv_begin" << triMesh.fv_begin(TriMesh::FaceHandle(cellPicker->GetCellId()));
-		qDebug() << "fv_end" << triMesh.fv_end(TriMesh::FaceHandle(cellPicker->GetCellId()));
+	//	vtkNew<vtkPolyDataMapper> mapper;
+	//	mapper->SetInputConnection(sphereSource->GetOutputPort()); //sphererSource 의 주소값을 mapper에 담는다
 
 
-		double min = 100;
-		OpenMesh::Vec3d minpoint;
-		vtkNew<vtkMath>math;
-		OpenMesh::VertexHandle vIdx;
-		for (TriMesh::FaceVertexIter fv_iter = triMesh.fv_begin(TriMesh::FaceHandle(cellPicker->GetCellId()));
-			fv_iter != triMesh.fv_end(TriMesh::FaceHandle(cellPicker->GetCellId())); fv_iter++) // fv_begin 은 첫점부터 fv_end값 까지 돈다 
-		{
-			qDebug() << "fv_iter : " << fv_iter->idx();
-			OpenMesh::Vec3d point = triMesh.point(fv_iter);         // point 반환 , 월드좌표에서 가장 가까운 vertex 거리 출력
-			OpenMesh::Vec3d diff = point - pickingPosition;         // 거리가 적은 백터값 담기
-			double distance = diff.length();                        // 거리가 가장 적은 vertex를 구해야한다.
+	//	vtkNew<vtkActor> mActor;
+	//	mActor->SetMapper(mapper);
+	//	mActor->GetProperty()->SetColor(colors->GetColor3d("Red").GetData());
+	//	mActor->GetProperty()->SetLineWidth(4);
 
-			qDebug() << "distance" << distance;
+	//	mObserver->func(mActor);
 
-			min = (min > distance) ? distance : min;
-			if (min == distance) {
-				minpoint = point;
-				vIdx = fv_iter;
-			} 
-		}
-		vertexIdxs.push_back(vIdx.idx()); // 처음값 파란색점
-	
+	//	vtkSmartPointer<vtkPolyData> polyData = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput();  
+	//	TriMesh triMesh = convertToMesh(polyData);
+	//	cout << "triMesh " << triMesh.n_vertices(); // 전체 점을 구한다.
 
-		mVertex = vtkSmartPointer<vtkPoints>::New();
-		mVertex->InsertNextPoint(minpoint[0], minpoint[1], minpoint[2]);
-		qDebug() << "minpoint---------------" << mVertex;
-
-		if (vertexIdxs.size() > 1) { //vertexIdxs 사이즈가 2부터 = 두번째 클릭 되었을 때 부터 점과 점사이를 이어주는 시작 부분
-			std::vector<int> dijkstarPath = dijkstra(vertexIdxs[vertexIdxs.size() - 2], vertexIdxs.back(), triMesh); // -2를 해준 이유는 첫번째 점에서 가기 위해서 이다.
-			cout <<  " dijkstarPath.size() : " << dijkstarPath.size();
-			for (int vertexIdx : dijkstarPath)
-			{ 
-				vtkNew<vtkSphereSource> sphereSource2;  //  노란색 점을 찍기 위한 sphereSource
-				sphereSource2->SetCenter(triMesh.point(OpenMesh::VertexHandle(vertexIdx)).data());
-				sphereSource2->SetRadius(0.2);
-				// Make the surface smooth.
-				sphereSource2->SetPhiResolution(100);
-				sphereSource2->SetThetaResolution(100);                                              
-
-				vtkNew<vtkPolyDataMapper> mapper2;                                                          
-				mapper2->SetInputConnection(sphereSource2->GetOutputPort());
-				vtkNew<vtkActor> mActor2;                                                                
-				mActor2->SetMapper(mapper2);
-				mActor2->GetProperty()->SetColor(colors->GetColor3d("Yellow").GetData());
-
-				mObserver->func(mActor2);
-			}
-
-		}
-
-		//현재 찍은 점의 vertex 의 개수를 알때 
-	   // 다음점의 꼭지점을 알고 가사이의 간선의 개수를 INF라 할때 어떻게 할 것 인가?
-
-		vtkNew<vtkSphereSource> sphereSource1;
-		sphereSource1->SetCenter(minpoint[0], minpoint[1], minpoint[2]);
-		sphereSource1->SetRadius(0.8);
-		// Make the surface smooth.
-		sphereSource->SetPhiResolution(100);
-		sphereSource->SetThetaResolution(100);
-		vtkNew<vtkPolyDataMapper> mapper1;
-		mapper1->SetInputConnection(sphereSource1->GetOutputPort());
+	//	qDebug() << "fv_begin" << triMesh.fv_begin(TriMesh::FaceHandle(cellPicker->GetCellId()));
+	//	qDebug() << "fv_end" << triMesh.fv_end(TriMesh::FaceHandle(cellPicker->GetCellId()));
 
 
-		vtkNew<vtkActor>eActor;
-		eActor->SetMapper(mapper1);
-		eActor->GetProperty()->SetColor(colors->GetColor3d("blue").GetData());
-		// mActor->GetProperty()->SetLineWidth(4);
-		mObserver->func(eActor);
-		vtkSmartPointer<vtkPolyData> polyData1 = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput(); // ??
-		TriMesh triMesh1 = convertToMesh(polyData1);
+	//	double min = 100;
+	//	OpenMesh::Vec3d minpoint;
+	//	vtkNew<vtkMath>math;
+	//	OpenMesh::VertexHandle vIdx;
+	//	for (TriMesh::FaceVertexIter fv_iter = triMesh.fv_begin(TriMesh::FaceHandle(cellPicker->GetCellId()));
+	//		fv_iter != triMesh.fv_end(TriMesh::FaceHandle(cellPicker->GetCellId())); fv_iter++) // fv_begin 은 첫점부터 fv_end값 까지 돈다 
+	//	{
+	//		qDebug() << "fv_iter : " << fv_iter->idx();
+	//		OpenMesh::Vec3d point = triMesh.point(fv_iter);         // point 반환 , 월드좌표에서 가장 가까운 vertex 거리 출력
+	//		OpenMesh::Vec3d diff = point - pickingPosition;         // 거리가 적은 백터값 담기
+	//		double distance = diff.length();                        // 거리가 가장 적은 vertex를 구해야한다.
 
-		vtkNew<vtkSphereSource> dsphereSource;
-		dsphereSource->SetCenter(minpoint[0], minpoint[1], minpoint[2]);
-		dsphereSource->SetRadius(0.5);
-		dsphereSource->SetPhiResolution(100);
-		dsphereSource->SetThetaResolution(100);
+	//		qDebug() << "distance" << distance;
 
-		vtkNew<vtkPolyDataMapper>dmapper;
-		dmapper->SetInputConnection(dsphereSource->GetOutputPort());
+	//		min = (min > distance) ? distance : min;
+	//		if (min == distance) {
+	//			minpoint = point;
+	//			vIdx = fv_iter;
+	//		} 
+	//	}
+	//	vertexIdxs.push_back(vIdx.idx()); // 처음값 파란색점
+	//
 
-		vtkNew<vtkActor>dActor;
-		dActor->SetMapper(dmapper);
-		dActor->GetProperty()->SetColor(colors->GetColor3d("green").GetData());
-		mObserver->func(dActor);
+	//	mVertex = vtkSmartPointer<vtkPoints>::New();
+	//	mVertex->InsertNextPoint(minpoint[0], minpoint[1], minpoint[2]);
+	//	qDebug() << "minpoint---------------" << mVertex;
 
-		//triMesh.delete_face(OpenMesh::FaceHandle(cellPicker->GetCellId())); // pickwer로 선택한 하나의 삼각형 meshf를 지운다
-		//qDebug() << "delete Cell ID : " << cellPicker->GetCellId(); 
-		//triMesh.garbage_collection();
+	//	if (vertexIdxs.size() > 1) { //vertexIdxs 사이즈가 2부터 = 두번째 클릭 되었을 때 부터 점과 점사이를 이어주는 시작 부분
+	//		std::vector<int> dijkstarPath = dijkstra(vertexIdxs[vertexIdxs.size() - 2], vertexIdxs.back(), triMesh); // -2를 해준 이유는 첫번째 점에서 가기 위해서 이다.
+	//		cout <<  " dijkstarPath.size() : " << dijkstarPath.size();
+	//		for (int vertexIdx : dijkstarPath)
+	//		{ 
+	//			vtkNew<vtkSphereSource> sphereSource2;  //  노란색 점을 찍기 위한 sphereSource
+	//			sphereSource2->SetCenter(triMesh.point(OpenMesh::VertexHandle(vertexIdx)).data());
+	//			sphereSource2->SetRadius(0.2);
+	//			// Make the surface smooth.
+	//			sphereSource2->SetPhiResolution(100);
+	//			sphereSource2->SetThetaResolution(100);                                              
 
-		vtkSmartPointer<vtkPolyData> meshToPoly = convertToPolyData(triMesh);
-		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->SetInputData(meshToPoly);
-		vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->Modified();
+	//			vtkNew<vtkPolyDataMapper> mapper2;                                                          
+	//			mapper2->SetInputConnection(sphereSource2->GetOutputPort());
+	//			vtkNew<vtkActor> mActor2;                                                                
+	//			mActor2->SetMapper(mapper2);
+	//			mActor2->GetProperty()->SetColor(colors->GetColor3d("Yellow").GetData());
+
+	//			mObserver->func(mActor2);
+	//		}
+
+	//	}
+
+	//	//현재 찍은 점의 vertex 의 개수를 알때 
+	//   // 다음점의 꼭지점을 알고 가사이의 간선의 개수를 INF라 할때 어떻게 할 것 인가?
+
+	//	vtkNew<vtkSphereSource> sphereSource1;
+	//	sphereSource1->SetCenter(minpoint[0], minpoint[1], minpoint[2]);
+	//	sphereSource1->SetRadius(0.8);
+	//	// Make the surface smooth.
+	//	sphereSource->SetPhiResolution(100);
+	//	sphereSource->SetThetaResolution(100);
+	//	vtkNew<vtkPolyDataMapper> mapper1;
+	//	mapper1->SetInputConnection(sphereSource1->GetOutputPort());
 
 
-	}
+	//	vtkNew<vtkActor>eActor;
+	//	eActor->SetMapper(mapper1);
+	//	eActor->GetProperty()->SetColor(colors->GetColor3d("blue").GetData());
+	//	// mActor->GetProperty()->SetLineWidth(4);
+	//	mObserver->func(eActor);
+	//	vtkSmartPointer<vtkPolyData> polyData1 = vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->GetInput(); // ??
+	//	TriMesh triMesh1 = convertToMesh(polyData1);
+
+	//	vtkNew<vtkSphereSource> dsphereSource;
+	//	dsphereSource->SetCenter(minpoint[0], minpoint[1], minpoint[2]);
+	//	dsphereSource->SetRadius(0.5);
+	//	dsphereSource->SetPhiResolution(100);
+	//	dsphereSource->SetThetaResolution(100);
+
+	//	vtkNew<vtkPolyDataMapper>dmapper;
+	//	dmapper->SetInputConnection(dsphereSource->GetOutputPort());
+
+	//	vtkNew<vtkActor>dActor;
+	//	dActor->SetMapper(dmapper);
+	//	dActor->GetProperty()->SetColor(colors->GetColor3d("green").GetData());
+	//	mObserver->func(dActor);
+
+	//	//triMesh.delete_face(OpenMesh::FaceHandle(cellPicker->GetCellId())); // pickwer로 선택한 하나의 삼각형 meshf를 지운다
+	//	//qDebug() << "delete Cell ID : " << cellPicker->GetCellId(); 
+	//	//triMesh.garbage_collection();
+
+	//	vtkSmartPointer<vtkPolyData> meshToPoly = convertToPolyData(triMesh);
+	//	vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->SetInputData(meshToPoly);
+	//	vtkPolyDataMapper::SafeDownCast(cellPicker->GetActor()->GetMapper())->Modified();
+
+
+	//}
 }
 
 void CustomInteractorStyle::OnLeftButtonUp()

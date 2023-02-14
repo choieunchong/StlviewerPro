@@ -10,7 +10,7 @@
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkAxesActor.h>
 #include <QDebug>
-
+#include "CustomvtkInteractorActor.h"
 
 class CustomVTKWidget : public QVTKOpenGLNativeWidget , public Observer
 { 
@@ -40,4 +40,5 @@ protected:
 
 private: 
     CustomInteractorStyle* customInteractorStyle;
+    CustomvtkInteractorActor* customvtkInteractorActor;
 };

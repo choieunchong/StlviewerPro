@@ -7,10 +7,10 @@
 #include <algorithm> 
 
 
-enum {
-    VTK_TEXTURE_BLENDING_MODE_NONE = 0, VTK_TEXTURE_BLENDING_MODE_REPLACE, VTK_TEXTURE_BLENDING_MODE_MODULATE, VTK_TEXTURE_BLENDING_MODE_ADD,
-    VTK_TEXTURE_BLENDING_MODE_ADD_SIGNED, VTK_TEXTURE_BLENDING_MODE_INTERPOLATE, VTK_TEXTURE_BLENDING_MODE_SUBTRACT
-} VTKTextureBlendingMode;
+//enum {
+//    VTK_TEXTURE_BLENDING_MODE_NONE = 0, VTK_TEXTURE_BLENDING_MODE_REPLACE, VTK_TEXTURE_BLENDING_MODE_MODULATE, VTK_TEXTURE_BLENDING_MODE_ADD,
+//    VTK_TEXTURE_BLENDING_MODE_ADD_SIGNED, VTK_TEXTURE_BLENDING_MODE_INTERPOLATE, VTK_TEXTURE_BLENDING_MODE_SUBTRACT
+//} VTKTextureBlendingMode;
 
 STLViewer::STLViewer(QWidget *parent) :
     QWidget(parent),
@@ -486,46 +486,86 @@ void STLViewer::SetTexture()
     pngReader->Update();
     qDebug() << "pngRender" << pngReader->GetFileName();
 
-    //vtkSmartPointer<vtkImageActor> imageActor =
-    //    vtkSmartPointer<vtkImageActor>::New();
-    //imageActor->GetMapper()->SetInputData(reader->GetOutput());
 
-    m_PolyData->DeepCopy(pngReader->GetOutput());
+    //m_PolyData->DeepCopy(pngReader->GetOutput());
+    //mMapper->SetInputData(m_PolyData);
+   // qDebug() << "m_polyData" << m_PolyData;
 
-    mMapper->SetInputData(m_PolyData);
-    qDebug() << "m_polyData" << m_PolyData;
-  
+    vtkSmartPointer<vtkTexture> m_Texture =
+        vtkSmartPointer<vtkTexture>::New();
 
-    //texture->SetInputData(pngReader->GetOutput());
+    qDebug() << "m_Texture" << m_Texture->GetTextureUnit();
     m_Texture->SetInputConnection(pngReader->GetOutputPort());
-    m_Texture->InterpolateOn();
-    m_Texture->SetBlendingMode(vtkTexture::VTK_TEXTURE_BLENDING_MODE_ADD);
-
-    //vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    //mapper->SetInputConnection(pngReader->GetOutputPort());
-
-   // vtkNew<vtkActor> tActor;
-   //// tActor->SetMapper(tMaper);
-   // tActor->SetMapper(mapper);
-    //mActor->SetMapper(mapper);
+    
+ 
+    // m_Texture->SetInputData(pngReader->GetOutput());
+    m_Texture->InterpolateOn();  //텍스처 보간을 고품질로 만든다.
+    m_Texture->IsTranslucent();
+    //m_Texture->SetBlendingMode(VTK_TEXTURE_BLENDING_MODE_MODULATE);
 
 
+
+    //vtkSmartPointer<vtkTextureMapToSphere> textureMap = vtkSmartPointer<vtkTextureMapToSphere>::New();
+    //textureMap->SetInputConnection(m_STLReader->GetOutputPort()); // png 파일을 둥글게 만들때 사용하는 함수
+    //textureMap->SetCenter(0.0, 0.0, 0.0);
+    //textureMap->SetPreventSeam(true);
+    //textureMap->SetAutomaticSphereGeneration(true)
+    //mMapper->SetInputConnection(textureMap->GetOutputPort());
+
+    //vtkSmartPointer<vtkImplicitTextureCoords> textureCoords =
+    //    vtkSmartPointer<vtkImplicitTextureCoords>::New();
+    //textureCoords->SetInputConnection(m_STLReader->GetOutputPort());
+
+    // 이미지에 따라 좌표 설정을 하기 위한 변수 설정
+    //double origin[3] = { x0, y0, z0 };
+    //double position[3] = { x1, y1, z1 };
+    //double scale[3] = { sx, sy, sz };
+
+
+    vtkSmartPointer<vtkTextureMapToSphere> textureMapToSphere = // 한개의 png 파일을 입히기 
+        vtkSmartPointer<vtkTextureMapToSphere>::New();
+
+    textureMapToSphere->SetInputConnection(m_STLReader->GetOutputPort());
+  //  textureMapToSphere->SetInputData(m_PolyData);
+
+    textureMapToSphere->PreventSeamOff();
+    
+    textureMapToSphere->Update();
+
+    //textureMapToSphere->SetCenter(0, 0, 0);
+  //  textureMapToSphere->AutomaticSphereGenerationOn();
+
+    // textureMapToPlane->SetAutomaticPlaneGeneration(false);
+     //textureMapToPlane->SetAutomaticPlaneGeneration(true);
+     //textureMapToPlane->SetOrigin(0.5, 0.5, 0.0); // 평면의 원점을 정의 한다.
+     //textureMapToPlane->GetGlobalWarningDisplay();
+     //textureMapToPlane->SetPoint1(50.0, 50.0, 0.0);
+     //textureMapToPlane->SetPoint2(20, 20, 20);
+    // textureMapToPlane->SetNormal(0.5, 0.5, 0.0); //평면 법선을 지정한다.
+     //textureMapToPlane->SetSRange(1, 0.5);
+     //textureMapToPlane->SetTRange(1, 0.5);
+
+    mMapper->SetInputConnection(textureMapToSphere->GetOutputPort());
+
+    // mMapper->SetInputConnection(transformTexture->GetOutputPort());
+
+     //qDebug()<<"textureMap_Origin" << textureMapToPlane->GetOrigin();
+    // mMapper->SetInputConnection(textureMap->GetOutputPort());
+     //m_Texture->SetQualityTo32Bit();
+     //m_Texture->GetQuality();
+
+    mActor->SetMapper(mMapper);
     mActor->SetTexture(m_Texture);
-    //texture->SetInputConnection()
+
+
     qDebug() << "texture" << m_Texture;
-
-   /* mActor->SetTexture(texture);*/
     m_Renderer->AddActor(mActor);
-
     m_RenderWindow->AddRenderer(m_Renderer);
-    //vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-    //    vtkSmartPointer<vtkRenderWindowInteractor>::New();
-   /* renderWindowInteractor->SetRenderWindow(m_RenderWindow);*/
     m_Interactor->SetRenderWindow(m_RenderWindow);
 
 
     ui->openGLWidget->GetRenderWindow()->Render();
-   /* m_Interactor->Start();*/
+    /* m_Interactor->Start();*/
     m_OriginProp = mActor->GetProperty();
     qDebug() << "m_OrigninProp" << m_OriginProp;
 }

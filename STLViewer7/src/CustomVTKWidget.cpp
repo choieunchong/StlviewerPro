@@ -43,12 +43,18 @@ CustomVTKWidget::CustomVTKWidget(QWidget* parent)
 	mRenderWindow->AddRenderer(mRenderer);
 	customInteractorStyle = new CustomInteractorStyle;
 	customInteractorStyle->addObserver(this);
+	customvtkInteractorActor = new CustomvtkInteractorActor;
+
 	mInteractor = vtkSmartPointer<QVTKInteractor>::New();
 	mRenderWindow->SetInteractor(mInteractor);
 	mInteractor->Initialize();
 	customInteractorStyle->SetCurrentRenderer(mRenderer);
+	customvtkInteractorActor->SetCurrentRenderer(mRenderer);
 	mInteractor->SetInteractorStyle(customInteractorStyle);
+	mInteractor->SetInteractorStyle(customvtkInteractorActor);
 	customInteractorStyle->Delete();
+	customvtkInteractorActor->Delete();
+
 	mvtkInteractorAdapter = new QVTKInteractorAdapter(this);
 
 	vtkOrient->SetOrientationMarker(Axes);
