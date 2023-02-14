@@ -4,16 +4,7 @@
 #include <QDebug>
 #include <QDebug>
 #include <TriMesh.h>
-#include <algorithm> e
-
-
-enum 
-{
-    VTK_TEXTURE_BLENDING_MODE_NONE = 0, VTK_TEXTURE_BLENDING_MODE_REPLACE, VTK_TEXTURE_BLENDING_MODE_MODULATE, VTK_TEXTURE_BLENDING_MODE_ADD,
-    VTK_TEXTURE_BLENDING_MODE_ADD_SIGNED, VTK_TEXTURE_BLENDING_MODE_INTERPOLATE, VTK_TEXTURE_BLENDING_MODE_SUBTRACT
-} VTKTextureBlendingMode;
-
-
+#include <algorithm> 
 
 STLViewer::STLViewer(QWidget *parent) :
     QWidget(parent),
@@ -28,10 +19,12 @@ STLViewer::STLViewer(QWidget *parent) :
     m_WLightSlider = new QWidget(this);
     mWTool = new QWidget(this);
     mWMaterial = new QWidget(this);
+    m_WAmbientSlider = new QWidget(this);
 
     m_Slider = new QSlider(Qt::Horizontal, this);
     m_Slider->setRange(0,100); 
     m_Slider->setMaximumSize(QSize(200, 50));
+
     m_Cutbutton = new QPushButton("Cut", this);
     m_Openbutton = new QPushButton("Open", this);
     m_Colorbutton = new QPushButton("Color", this);
@@ -54,6 +47,7 @@ STLViewer::STLViewer(QWidget *parent) :
 
     m_TextButton = new QPushButton("Texture", this);
     m_SaveButton = new QPushButton("Save", this);
+    m_AmbientOcclusionButton = new QPushButton("Occlusion", this);
     m_BoundingBoxButton = new QPushButton("Box", this);
 
 
@@ -69,6 +63,18 @@ STLViewer::STLViewer(QWidget *parent) :
     QLabel* ConeLabel = new QLabel("ConeLabel");
     ConeLabel->setStyleSheet("QLabel {color : #fff}");
 
+    QLabel* AmbientRadiusLabel = new QLabel("AmbientRadiusLabel");
+    AmbientRadiusLabel->setStyleSheet("QLabel {color : #fff}");
+
+    QLabel* AmbientBiasLabel = new QLabel("AmbientBiasLabel");
+    AmbientBiasLabel->setStyleSheet("QLabel {color : #fff}");
+
+    QLabel* AmbientKernelLabel = new QLabel("AmbientKernelLabel");
+    AmbientKernelLabel->setStyleSheet("QLabel {color : #fff}");
+
+    QLabel* AmbientBlurLabel = new QLabel("AmbientBlurLabel");
+    AmbientBlurLabel->setStyleSheet("QLabel {color : #fff}");
+
     m_HAmLightSliderLayout = new QHBoxLayout();
     m_HDiLightSliderLayout = new QHBoxLayout();
     m_HSpLightSliderLayout = new QHBoxLayout();
@@ -77,6 +83,7 @@ STLViewer::STLViewer(QWidget *parent) :
     m_HmaterialLayout = new QHBoxLayout();
     m_ConeAngleLayout = new QHBoxLayout();
    // m_SettingButtonLayout = new QHBoxLayout();
+    m_VlayoutAmbientOcclusion = new QVBoxLayout();
 
     m_AmbientLightSlider = new QSlider(Qt::Horizontal, this);
     m_AmbientLightSlider->setRange(0, 100);
@@ -94,6 +101,34 @@ STLViewer::STLViewer(QWidget *parent) :
     m_ConeAngle->setRange(0, 100);
     m_ConeAngle->setMaximumSize(QSize(200, 50));
 
+    m_AmbientRadiusSlider = new QSlider(Qt::Horizontal, this);
+    m_AmbientRadiusSlider->setRange(0, 100);
+    m_AmbientRadiusSlider->setMaximumSize(QSize(200, 50));
+
+    m_AmbientBiasSlider = new QSlider(Qt::Horizontal, this);
+    m_AmbientBiasSlider->setRange(0, 100);
+    m_AmbientBiasSlider->setMaximumSize(QSize(200, 50));
+
+    m_AmbientKernelSizeSlider = new QSlider(Qt::Horizontal, this);
+    m_AmbientKernelSizeSlider->setRange(0, 100);
+    m_AmbientKernelSizeSlider->setMaximumSize(QSize(200, 50));
+
+    m_AmbientBlurSlider = new QSlider(Qt::Horizontal, this);
+    m_AmbientBlurSlider->setRange(0, 100);
+    m_AmbientBlurSlider->setMaximumSize(QSize(200, 50));
+
+    m_VlayoutAmbientOcclusion->addWidget(AmbientRadiusLabel);
+    m_VlayoutAmbientOcclusion->addWidget(m_AmbientRadiusSlider);
+
+    m_VlayoutAmbientOcclusion->addWidget(AmbientBiasLabel);
+    m_VlayoutAmbientOcclusion->addWidget(m_AmbientBiasSlider);
+
+    m_VlayoutAmbientOcclusion->addWidget(AmbientKernelLabel);
+    m_VlayoutAmbientOcclusion->addWidget(m_AmbientKernelSizeSlider);
+
+    m_VlayoutAmbientOcclusion->addWidget(AmbientBlurLabel);
+    m_VlayoutAmbientOcclusion->addWidget(m_AmbientBlurSlider);
+
     m_HAmLightSliderLayout->addWidget(AmbientLabel);
     m_HAmLightSliderLayout->addWidget(m_AmbientLightSlider);
 
@@ -106,19 +141,14 @@ STLViewer::STLViewer(QWidget *parent) :
     m_ConeAngleLayout->addWidget(ConeLabel);
     m_ConeAngleLayout->addWidget(m_ConeAngle);
 
-
     m_HToolLayout->addWidget(m_TextButton);
     m_HToolLayout->addWidget(m_SaveButton);
+    m_HToolLayout->addWidget(m_AmbientOcclusionButton);
     m_HToolLayout->addWidget(m_BoundingBoxButton);
 
     m_HmaterialLayout->addWidget(m_PhongButton);
     m_HmaterialLayout->addWidget(m_GouraudButton);
     m_HmaterialLayout->addWidget(m_FlatButton);
-
-    //m_Colorbutton->setGeometry(0, 0, 100, 100);
-    //m_Openbutton->setGeometry(0, 0, 100, 100);
-    //m_Light->setGeometry(0, 0, 100, 100);
-    //m_Cutbutton->setGeometry(0, 0, 100, 100);
 
     m_Renderer = vtkSmartPointer<vtkRenderer>::New();
     m_RenderWindow = vtkSmartPointer<vtkRenderWindow>::New();
@@ -130,9 +160,7 @@ STLViewer::STLViewer(QWidget *parent) :
     m_STLReader = vtkSmartPointer< vtkSTLReader>::New();
     m_PolyData = vtkSmartPointer<vtkPolyData>::New();
     m_OutlineActor = vtkSmartPointer<vtkActor>::New();
-
-    //m_transform = vtkSmartPointer< vtkTransform>::New();
-    //m_Camera = vtkSmartPointer<vtkCamera>::New();
+    ssaoPass = vtkSmartPointer<vtkSSAOPass>::New();
 
     m_Renderer = ui->openGLWidget->GetInteractor()->GetInteractorStyle()->GetCurrentRenderer();
     m_RenderWindow = ui->openGLWidget->GetRenderWindow();
@@ -156,6 +184,11 @@ STLViewer::STLViewer(QWidget *parent) :
     connect(m_DiffuseLightSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightDiffuseChange(int)));
     connect(m_SpecularLightSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightSpecularChange(int)));
     connect(m_ConeAngle, SIGNAL(valueChanged(int)), this, SLOT(SetConeAngleChange(int)));
+   
+    connect(m_AmbientRadiusSlider, SIGNAL(valueChanged(int)), this, SLOT(SetAmbientRadiusChange(int)));
+    connect(m_AmbientBiasSlider, SIGNAL(valueChanged(int)), this, SLOT(SetAmbientBiasChange(int)));
+    connect(m_AmbientKernelSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetAmbientKernelSizeChange(int)));
+    connect(m_AmbientBlurSlider, SIGNAL(valueChanged(int)), this, SLOT(SetAmbientBlurChange(int)));
 
     connect(m_LightXMoveButton, SIGNAL(clicked()), this, SLOT(SetLigntXMove()));
     connect(m_LightYMoveButton, SIGNAL(clicked()), this, SLOT(SetLightYMove()));
@@ -165,6 +198,14 @@ STLViewer::STLViewer(QWidget *parent) :
     connect(m_TextButton, SIGNAL(clicked()), this, SLOT(SetTexture()));
     connect(m_SaveButton, SIGNAL(clicked()), this, SLOT(SaveFile()));
     connect(m_BoundingBoxButton, SIGNAL(clicked()), this, SLOT(BoundingBox()));
+
+    connect(m_AmbientOcclusionButton, SIGNAL(clicked()), this, SLOT(SetvtkAmbientOcclusion()));
+    
+    connect(m_AmbientOcclusionButton, SIGNAL(clicked()), this, SLOT(clieckedTextureButton()));
+    connect(m_AmbientRadiusSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightAmbientChange(int)));
+    connect(m_AmbientBiasSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightAmbientChange(int)));
+    connect(m_AmbientKernelSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightAmbientChange(int)));
+    connect(m_AmbientBlurSlider, SIGNAL(valueChanged(int)), this, SLOT(SetLightAmbientChange(int)));
 
     connect(m_PhongButton, SIGNAL(clicked()), this, SLOT(SetPhongChange()));
     connect(m_GouraudButton, SIGNAL(clicked()), this, SLOT(SetGouraudChange()));
@@ -222,6 +263,10 @@ STLViewer::STLViewer(QWidget *parent) :
     mWMaterial->setLayout(m_HmaterialLayout);
     mWMaterial->setMinimumSize(500, 100);
     mWMaterial->hide();
+
+    m_WAmbientSlider->setLayout(m_VlayoutAmbientOcclusion);
+    m_WAmbientSlider->setMinimumSize(500, 500);
+    m_WAmbientSlider->hide();
 }
 
 STLViewer::~STLViewer()
@@ -268,11 +313,61 @@ void STLViewer::SetConeAngleChange(int Angle)
     if (mActor != NULL)
     {
        // mActor->GetProperty()->SetAngle(Angle);
-        mLight->SetConeAngle(Angle);
+        mLight->SetConeAngle(Angle / 100.0);
        // mActor->Modified();
         ui->openGLWidget->GetRenderWindow()->Render();
     }
 }
+
+void STLViewer::SetAmbientRadiusChange(int Radius)
+{
+    qDebug() << "Radius";
+    if (mActor != NULL)
+    {
+        ssaoPass->SetRadius(Radius / 100.0);
+        m_Renderer->SetPass(ssaoPass);
+        // mActor->Modified();
+        ui->openGLWidget->GetRenderWindow()->Render();
+    }
+}
+
+void STLViewer::SetAmbientBiasChange(int Bias)
+{
+    qDebug() << "Bias";
+    if (mActor != NULL)
+    {
+        // mActor->GetProperty()->SetAngle(Angle);
+        ssaoPass->SetBias(Bias/ 100.0);
+          //ssao->SetDelegatePass(basicPasses);
+        // mActor->Modified();
+        ui->openGLWidget->GetRenderWindow()->Render();
+    }
+}
+
+void STLViewer::SetAmbientKernelSizeChange(int KernelSize)
+{
+    qDebug() << "Kernel";
+    if (mActor != NULL)
+    {
+        // mActor->GetProperty()->SetAngle(Angle);
+        ssaoPass->SetKernelSize(KernelSize);
+        // mActor->Modified();
+        ui->openGLWidget->GetRenderWindow()->Render();
+    }
+}
+
+void STLViewer::SetAmbientBlurChange(int Blur)
+{
+    qDebug() << "Blur";
+    if (mActor != NULL)
+    {
+        // mActor->GetProperty()->SetAngle(Angle);
+        ssaoPass->SetBlur(true);
+        // mActor->Modified();
+        ui->openGLWidget->GetRenderWindow()->Render();
+    }
+}
+
 
 void STLViewer::cliekedLightButton()
 {
@@ -294,6 +389,23 @@ void STLViewer::cliekedLightButton()
         }
 
     }
+
+void STLViewer::clieckedTextureButton()
+{
+    static int count = 0;
+    qDebug() << "clieckedTextureButton";
+    switch (++count)
+    {
+    case 1:
+        m_WAmbientSlider->show();
+        break;
+    default:
+        count = 0;
+        m_WAmbientSlider->hide();
+        break;
+    }
+
+}
 
 
 //void STLViewer::MoveButton()
@@ -527,75 +639,26 @@ void STLViewer::SetTexture()
     mMapper->SetInputConnection(pngReader->GetOutputPort()); //
     qDebug() << "m_polyData" << m_PolyData;
 
-
     vtkSmartPointer<vtkTexture> m_Texture =
         vtkSmartPointer<vtkTexture>::New();
 
     qDebug() << "m_Texture" << m_Texture->GetTextureUnit();
     m_Texture->SetInputConnection(pngReader->GetOutputPort());
 
-    /*m_Texture->SetMaximumAnisotropicFiltering(4.0);*/
-   // m_Texture->SetInputData(pngReader->GetOutput());
     m_Texture->InterpolateOn(); // 선형 보간을 킨다.
-    //m_Texture->MipmapOn();
-    //m_Texture->SetMaximumAnisotropicFiltering(16);
 
     qDebug() << "MaxFiltering" << m_Texture->GetMaximumAnisotropicFiltering();
-    //m_Texture->SetBlendingMode(VTK_TEXTURE_BLENDING_MODE_MODULATE);
-
-   
-
-    //vtkSmartPointer<vtkTextureMapToSphere> textureMap = vtkSmartPointer<vtkTextureMapToSphere>::New();
-    //textureMap->SetInputConnection(m_STLReader->GetOutputPort()); // png 파일을 둥글게 만들때 사용하는 함수
-    //textureMap->SetCenter(0.0, 0.0, 0.0);
-    //textureMap->SetPreventSeam(true);
-    //textureMap->SetAutomaticSphereGeneration(true)
-    //mMapper->SetInputConnection(textureMap->GetOutputPort());
-
-    //vtkSmartPointer<vtkImplicitTextureCoords> textureCoords =
-    //    vtkSmartPointer<vtkImplicitTextureCoords>::New();
-    //textureCoords->SetInputConnection(m_STLReader->GetOutputPort());
-
-    // 이미지에 따라 좌표 설정을 하기 위한 변수 설정
-    //double origin[3] = { x0, y0, z0 };
-    //double position[3] = { x1, y1, z1 };
-    //double scale[3] = { sx, sy, sz };
-
 
     vtkSmartPointer<vtkTextureMapToSphere> textureMapToSphere = // 한개의 png 파일을 입히기 
         vtkSmartPointer<vtkTextureMapToSphere>::New();
 
     textureMapToSphere->SetInputData(m_PolyData);
-
     textureMapToSphere->SetInputConnection(m_STLReader->GetOutputPort());
     textureMapToSphere->Update(); 
     textureMapToSphere->PreventSeamOn();
     textureMapToSphere->SetAutomaticSphereGeneration(1);
-    //textureMapToSphere->SetCenter(0, 0, 0);
-   // textureMapToSphere->AutomaticSphereGenerationOn();
-
-
-
-   // textureMapToPlane->SetAutomaticPlaneGeneration(false);
-    //textureMapToPlane->SetAutomaticPlaneGeneration(true);
-    //textureMapToPlane->SetOrigin(0.5, 0.5, 0.0); // 평면의 원점을 정의 한다.
-    //textureMapToPlane->GetGlobalWarningDisplay();
-    //textureMapToPlane->SetPoint1(50.0, 50.0, 0.0);
-    //textureMapToPlane->SetPoint2(20, 20, 20);
-   // textureMapToPlane->SetNormal(0.5, 0.5, 0.0); //평면 법선을 지정한다.
-    //textureMapToPlane->SetSRange(1, 0.5);
-    //textureMapToPlane->SetTRange(1, 0.5);
      
     mMapper->SetInputConnection(textureMapToSphere->GetOutputPort());
-    //mMapper->SetInputArrayToProcess(0,0,0, vtkDataObject::FIELD_ASSOCIATION_POINTS, "TextureCoordinates");
-   
-   // mMapper->SetInputConnection(transformTexture->GetOutputPort());
-   
-    //qDebug()<<"textureMap_Origin" << textureMapToPlane->GetOrigin();
-   // mMapper->SetInputConnection(textureMap->GetOutputPort());
-    //m_Texture->SetQualityTo32Bit();
-    //m_Texture->GetQuality();
-
     mActor->SetMapper(mMapper);
     mActor->SetTexture(m_Texture);
 
@@ -607,11 +670,48 @@ void STLViewer::SetTexture()
     m_RenderWindow->AddRenderer(m_Renderer);
     m_Interactor->SetRenderWindow(m_RenderWindow);
 
-
     ui->openGLWidget->GetRenderWindow()->Render();
    /* m_Interactor->Start();*/
     m_OriginProp = mActor->GetProperty();
     qDebug() << "m_OrigninProp" << m_OriginProp;
+}
+
+void STLViewer::SetvtkAmbientOcclusion()
+{
+    //vtkSmartPointer<vtkSSAOPass> ssaoPass = vtkSmartPointer<vtkSSAOPass>::New();
+    //ssaoPass->SetRadius(0.9);
+    //ssaoPass->SetBias(0.16);
+    //ssaoPass->SetKernelSize(500);
+
+    //vtkNew<vtkRenderStepsPass> basicPasses;
+    //double sceneSize =0; // e.g. the diagonal of the bounding box
+
+    //vtkNew<vtkSSAOPass> ssao;
+    //ssao->SetRadius(0.1 * sceneSize); // comparison radius
+    //ssao->SetBias(0.001 * sceneSize); // comparison bias
+    //ssao->SetKernelSize(128); // number of samples used
+    //ssao->BlurOff(); // do not blur occlusion
+    //ssao->SetDelegatePass(basicPasses);
+
+    vtkNew<vtkRenderStepsPass> basicPasses;
+
+    ssaoPass->SetRadius(0.1);
+    ssaoPass->SetBias(0.001 );
+    ssaoPass->SetKernelSize(128);
+    ssaoPass->BlurOn();
+    ssaoPass->SetDelegatePass(basicPasses);
+    m_Renderer->SetPass(ssaoPass);
+
+
+    //mActor->GetProperty()->SetOcclusionStrength(1.0);
+
+    //m_Renderer->SetPass(ssaoPass);
+    //m_Renderer->AddActor(mActor);
+    ////m_RenderWindow->Render();
+
+    ////m_Interactor->SetRenderWindow(m_RenderWindow);
+
+    ui->openGLWidget->GetRenderWindow()->Render();
 }
 
 void STLViewer::on_AmbientButton_clicked() //주변광 
@@ -746,51 +846,93 @@ void STLViewer::on_SpecularPushButton_clicked() // Specular(정반사광) light 버튼
 void STLViewer::SetFlatChange()
 {
     qDebug() << "Flat";
+    
+    mMapper->SetInputConnection(m_STLReader->GetOutputPort());
+    mMapper->SetScalarVisibility(0);
+
+    mActor->SetMapper(mMapper);
     mActor->GetProperty()->SetInterpolationToFlat();
+
     m_Renderer->AddActor(mActor);
     m_RenderWindow->AddRenderer(m_Renderer);
     m_Interactor->SetRenderWindow(m_RenderWindow);
-
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetPosition(1, 1, 1);
-    light->SetColor(1, 1, 1);
-    m_Renderer->AddLight(light);
-    m_Interactor->Initialize();
 
     ui->openGLWidget->GetRenderWindow()->Render();
 
 }
 
 void STLViewer::SetPhongChange() // 셀 전체에 색상을 보간하기 위해 사용한다.
-{
+{                               // 고러드 쉐이딩에서 하이라이트나 반사광을 표현할 수 없는것을
+                                // 가능하게 해주는 쉐이딩
     qDebug() << "Phong";
     /*mActor->GetProperty()->SetSpecularPower(0.3);*/
+
+    vtkSmartPointer<vtkPolyDataNormals> normalGenerator = // 다각형 메시에 대한 법선 계산을 위해서 사용
+        vtkSmartPointer<vtkPolyDataNormals>::New();
+    normalGenerator->SetInputConnection(m_STLReader->GetOutputPort());
+    normalGenerator->ComputePointNormalsOn(); //접 번선 계산을 킨다.
+    normalGenerator->ComputeCellNormalsOff(); //셀 법선 계산을 끈다
+    normalGenerator->SetFeatureAngle(60.0); // 각도를 지정한다.
+    normalGenerator->Update();
+
+    mMapper->SetInputConnection(normalGenerator->GetOutputPort());
+    mActor->SetMapper(mMapper);
     mActor->GetProperty()->SetInterpolationToPhong();
+
+    //vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    //light->SetPosition(1, 1, 1);
+    ///*light->SetColor(1, 1, 1);*/
+    //m_Renderer->AddLight(light);
+
+    //vtkSmartPointer<vtkCamera> camera =
+    //    vtkSmartPointer<vtkCamera>::New();
+    //camera->SetPosition(0, 0, 3);
+    //camera->SetFocalPoint(0, 0, 0);
+    //camera->SetViewUp(0, 1, 0);
+    //camera->Azimuth(30);
+    //camera->Elevation(30);
+
     m_Renderer->AddActor(mActor);
     m_RenderWindow->AddRenderer(m_Renderer);
     m_Interactor->SetRenderWindow(m_RenderWindow);
 
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetPosition(1, 1, 1);
-    light->SetColor(1, 1, 1);
-    m_Renderer->AddLight(light);
 
     ui->openGLWidget->GetRenderWindow()->Render();
     m_Interactor->Start();
 }
 
-void STLViewer::SetGouraudChange()
+void STLViewer::SetGouraudChange() // falt 쉐이딩의 단점을 보완한 쉐이딩
 {
-    mActor->GetProperty()->SetSpecularPower(0.3);    
+    //mActor->GetProperty()->SetSpecularPower(0.3);    
+
+    vtkSmartPointer<vtkPolyDataNormals> normalGenerator =
+        vtkSmartPointer<vtkPolyDataNormals>::New();
+    normalGenerator->SetInputConnection(m_STLReader->GetOutputPort());
+    normalGenerator->ComputePointNormalsOn();
+    normalGenerator->ComputeCellNormalsOff();
+    normalGenerator->SetFeatureAngle(60.0);
+    normalGenerator->Update();
+
+    mMapper->SetInputConnection(normalGenerator->GetOutputPort());
+    mActor->SetMapper(mMapper);
     mActor->GetProperty()->SetInterpolationToGouraud();
+
+    //vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    //light->SetPosition(1, 1, 1);
+    //light->SetColor(1, 1, 1);
+    //m_Renderer->AddLight(light);
+
+    vtkSmartPointer<vtkCamera> camera =
+        vtkSmartPointer<vtkCamera>::New();
+    camera->SetPosition(0, 0, 30);
+    camera->SetFocalPoint(0, 0, 0);
+    camera->SetViewUp(0, 1, 0);
+    camera->Azimuth(30);
+    camera->Elevation(30);
+
     m_Renderer->AddActor(mActor);
     m_RenderWindow->AddRenderer(m_Renderer);
     m_Interactor->SetRenderWindow(m_RenderWindow);
-
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetPosition(1, 1, 1);
-    light->SetColor(1, 1, 1);
-    m_Renderer->AddLight(light);
 
     ui->openGLWidget->GetRenderWindow()->Render();
     m_Interactor->Start();
@@ -857,7 +999,6 @@ int STLViewer::SaveFile()
 
 void STLViewer::BoundingBox()
 {
-
     vtkSmartPointer<vtkOutlineFilter> outlineFilter =
         vtkSmartPointer<vtkOutlineFilter>::New();
     outlineFilter->SetInputConnection(m_STLReader->GetOutputPort());

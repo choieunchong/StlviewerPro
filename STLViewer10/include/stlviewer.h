@@ -28,12 +28,12 @@
 #include <QMessageBox>
 #include <vtkWindowToImageFilter.h>
 #include <vtkOutlineFilter.h>
-#include <vtkTransform.h> // move 이벤트 구현 해야 할 것
 
 #include <vtkPNGReader.h>
 #include <vtkTextureMapToSphere.h>
-#include <vtkTextureMapToPlane.h>
-#include <vtkImageData.h>
+#include <vtkPolyDataNormals.h>
+#include <vtkSSAOPass.h>
+#include <vtkRenderStepsPass.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class STLViewer; }
@@ -70,6 +70,7 @@ private:
     // 상자 구역 설정 버튼
     QPushButton* m_BoundingBoxButton;
 
+    // 빛의 방향 버튼
     QPushButton* m_LightXMoveButton;
     QPushButton* m_LightYMoveButton;
     QPushButton* m_LightZMoveButton;
@@ -77,7 +78,8 @@ private:
 
     QPushButton* m_TextButton;
     QPushButton* m_SaveButton;
-  //  QHBoxLayout* m_SettingButtonLayout;
+    QPushButton* m_AmbientOcclusionButton;
+
 
     QHBoxLayout* m_Hlayout;
     QHBoxLayout* m_HlayoutLight;
@@ -86,6 +88,7 @@ private:
     QHBoxLayout* m_HSpLightSliderLayout;
     QVBoxLayout* m_Vlayout;
     QVBoxLayout* m_VlayoutLightSlider;
+    QVBoxLayout* m_VlayoutAmbientOcclusion;
     QHBoxLayout* m_HToolLayout;
     QHBoxLayout* m_HmaterialLayout;
     QHBoxLayout* m_ConeAngleLayout;
@@ -95,12 +98,18 @@ private:
     QWidget* m_WLightSlider;
     QWidget* mWTool;
     QWidget* mWMaterial;
+    QWidget* m_WAmbientSlider;
 
     CustomVTKWidget* m_customVTKWidget;
     QSlider* m_AmbientLightSlider; //AmbientLight
     QSlider* m_DiffuseLightSlider; // DiffuseLight
     QSlider* m_SpecularLightSlider; // SpecularLight
     QSlider* m_ConeAngle;  // ConeAngle;
+
+    QSlider* m_AmbientRadiusSlider;
+    QSlider* m_AmbientBiasSlider;
+    QSlider* m_AmbientKernelSizeSlider;
+    QSlider* m_AmbientBlurSlider;
 
     vtkSmartPointer<vtkActor> mActor;
     vtkSmartPointer<vtkLight> m_SpotLight;
@@ -114,6 +123,8 @@ private:
     vtkSmartPointer<vtkLightActor> m_LightActor;
     vtkSmartPointer<vtkSTLReader> m_STLReader;
     vtkSmartPointer<vtkPolyData> m_PolyData;
+
+    vtkSmartPointer<vtkSSAOPass> ssaoPass;
 
     //vtkSmartPointer <vtkTransform> m_transform;
     //vtkSmartPointer<vtkCamera> m_Camera;
@@ -146,6 +157,13 @@ private slots:
     void SetGouraudChange();   // 고러드 재질로 변경
     void SetFlatChange();      // Flat 으로 재질 변경
     void SetConeAngleChange(int); // cone 의 각도를 설정 한다.
+    void SetvtkAmbientOcclusion(); // 실제 모델과 비슷하게 만들기 위한 명암 함수
+    void clieckedTextureButton();
+    void SetAmbientRadiusChange(int);
+    void SetAmbientBiasChange(int);
+    void SetAmbientKernelSizeChange(int);
+    void SetAmbientBlurChange(int);
+
   //  void MoveButton(); // 
 };
 
